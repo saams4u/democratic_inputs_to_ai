@@ -16,7 +16,7 @@ export default async function completion(req, res) {
         const href = req.body.href;
 
         const jsonDirectory = path.join(process.cwd(), 'vercel');
-        const stacks = JSON.parse(fs.readFileSync(jsonDirectory + '/data.json', 'utf8'));  
+        const stacks = await fs.readFile(jsonDirectory + '/data.json', 'utf8');  
         
         res.status(200).json(stacks);
 
