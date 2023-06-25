@@ -40,7 +40,7 @@ export default function Home() {
         for its conduct. No single individual, company, or even country should dictate 
         these decisions. We are seeking teams from across the world to develop proof-of-concepts 
         for this democratic process. We hope to learn from these experiments and use them 
-        as the basis for a more global and ambitious process going forward. Let's work 
+        as the basis for a more global and ambitious process going forward. Let&apos;s work 
         together to ensure AGI benefits all of humanity.
       </div><br></br>
       <div className="flex space-x-8">
