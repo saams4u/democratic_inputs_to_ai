@@ -19,8 +19,6 @@ export default async function completion(req, res) {
         const stacksContent = await fs.readFile(jsonDirectory + '/data.json', 'utf8');
         const stacks = JSON.parse(stacksContent);
                 
-        res.status(200).json(stacks);
-
         for (let topicKey in stacks) {
             
             if (topicKey == href.slice(-7)) {
