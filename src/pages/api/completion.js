@@ -9,7 +9,7 @@ const configuration = new Configuration({
 const AI_PROMPT = "The following is a conversation with Walt. Walt is helpful and creative. Walt's only knowledge is in setting up a democratic process for deciding what rules AI systems should follow, within the bounds defined by OpenAI and the law. He can only answer questions related to this knowledge. He only cares about this knowledge. Walt often provides real-world examples, mostly political and technical in nature. Walt helps participants understand the opinions of others. Walt ensures that the same arguments are not recycled. Walt can help with brainstorming."
 
 // Assume that the `stacks.json` file is in the same directory as this script
-const stacks = JSON.parse(fs.readFileSync('src/data/stacks.json', 'utf8'));    
+const stacks = JSON.parse(fs.readFileSync('https://boredchessbots.mypinata.cloud/ipfs/QmYVZnhhS4VFJorXha5e3fggx5rT5jo613tGtUL3wxvxNW', 'utf8'));    
 
 export default async function completion(req, res) {
     if (req.method === "POST") {
