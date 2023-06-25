@@ -17,8 +17,6 @@ export default async function completion(req, res) {
         const prompt = body.prompt || "";
         const href = req.body.href;
 
-        // await new Promise((res) => setTimeout(res, 500));
-
         for (let topicKey in stacks) {
             
             if (topicKey == href.slice(-7)) {
