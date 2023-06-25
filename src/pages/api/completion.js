@@ -1,6 +1,6 @@
 
 import { Configuration, OpenAIApi } from "openai";
-import fs from 'fs';  // Import the 'fs' module
+import { promises as fs } from 'fs';
 import path from 'path';
 
 const configuration = new Configuration({
@@ -15,9 +15,10 @@ export default async function completion(req, res) {
         const prompt = body.prompt || "";
         const href = req.body.href;
 
-        const jsonDirectory = path.join(process.cwd(), 'vercel');
-        const stacks = await fs.readFile(jsonDirectory + '/data.json', 'utf8');  
-        
+        const jsonDirectory = path.join(process.cwd(), 'json');
+        const stacksContent = await fs.readFile(jsonDirectory + '/data.json', 'utf8');
+        const stacks = JSON.parse(stacksContent);
+                
         res.status(200).json(stacks);
 
         for (let topicKey in stacks) {
