@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html, body, #__next {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.blinking-cursor>:last-child:after {
+  content: "|";
+  animation: blink 1s steps(2, jump-none) infinite;
+}
+
+@keyframes blink {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+::-webkit-scrollbar {
+  height: 0px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #859596;
+  -webkit-border-radius: 1ex;
+}
+
+::-webkit-scrollbar-corner {
+  background: #000;
+}
