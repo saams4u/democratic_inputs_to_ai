@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function Home() {
-
   const renderStacks = () => {
     return Object.keys(stacks).map((stackKey) => {
       const stack = stacks[stackKey];
@@ -29,9 +28,9 @@ export default function Home() {
   return (
     <div className="h-full flex justify-center items-center flex-col">
       <a target="_blank" href="https://openai.com/blog/democratic-inputs-to-ai" style={{ color: '#0000EE', textDecoration: 'none' }}>
-      <h1 style={{ fontSize: 50 }}>Democratic Inputs to AI</h1><br></br>
+      <h1 style={{ fontSize: 50, fontFamily: "Calibri" }}>Democratic Inputs to AI</h1><br></br>
       </a>
-      <div className="flex text-center">
+      <div className="flex text-center" style={{ fontSize: 20, fontFamily: "Calibri" }}>
         Welcome to our initiative to democratize AI! OpenAI is launching a program 
         to fund experiments in setting up a democratic process for deciding what rules 
         AI systems should follow. We believe that AI behavior should be shaped by 

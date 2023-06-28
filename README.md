@@ -1,35 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# README
 
-## Getting Started
+This README describes the web application built using Next.js, which is based on OpenAI's initiative titled "Democratic Inputs to AI". The website can be viewed [here](https://openai.com/blog/democratic-inputs-to-ai).
 
-First, run the development server:
+## Index.js File Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+The `index.js` file serves as the main entry point for the application. It contains the `Home` component, which is the default function exported by the file. This function is a functional component that returns the JSX to be rendered on the home page of the application.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The `Home` component displays a welcome message about OpenAI's initiative and a collection of "stacks" or technologies, whose information is stored in a separate JSON file.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Dependencies
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This project uses the following external libraries:
 
-## Learn More
+- `next/link`: Used to create navigable links in the Next.js application without a full page refresh.
+- `next/image`: Used for handling and optimizing images in the Next.js application.
+- `iron-session`: Provides a middleware for session handling. It's useful for creating, reading, and managing user sessions in the application.
+- `lowdb`: A small local JSON database powered by Lodash, which provides a set of utility functions for handling and manipulating data.
+- `openai`: An official OpenAI client library for the OpenAI API. This allows the application to make use of OpenAI's AI models and services.
 
-To learn more about Next.js, take a look at the following resources:
+### Functionality
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The `Home` function contains a sub-function `renderStacks` which maps over the keys of the `stacks` object (imported from `stacks.json`) and returns a `Link` component for each key. Each `Link` contains an `Image` component displaying the logo of the respective stack. The `Link` component takes a `href` prop which is the URL to navigate to when the component is clicked.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Styling
 
-## Deploy on Vercel
+Styling is accomplished with a mix of Tailwind CSS classes and inline styles:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Tailwind CSS: Used for general layout and spacing, as well as some specific styles like border and roundness.
+- Inline Styles: Used for more specific styling requirements like custom font size, font family, color, and text decoration.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-# democratic_inputs_to_ai
+## Stack Data
+
+The `stacks` data is a JSON object where each key represents a unique identifier for a technology stack. Each key points to an object containing the following properties:
+
+- `href`: A string that represents the URL to navigate to when the stack's logo is clicked.
+- `hoverClass`: A string that determines the CSS class applied when the logo is hovered over.
+- `logo`: A string that represents the URL of the logo image of the stack.
+- `name`: A string that represents the name of the stack. It is used as the alt text for the image.
+
+Please note that the JSON file is located in the `data` directory of the project root and is imported at the top of the `index.js` file.
+
+## Running the App Locally
+
+To run this app locally, you need to have Node.js and npm installed on your machine. Then, follow these steps:
+
+1. Clone the repository to your local machine.
+2. Navigate to the project directory in the terminal.
+3. Install the necessary dependencies with `npm install`.
+4. Start the development server with `npm run dev`.
+
+The application should now be running on `http://localhost:3000`.
+
+## Contributing
+
+If you wish to contribute to this project, please create a new branch for each feature or bug fix, commit your changes, and create a pull request for review.
+
+## License
+
+This project is licensed under the terms of the MIT license.

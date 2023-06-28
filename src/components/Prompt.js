@@ -17,6 +17,7 @@ export default function Prompt({onSubmit}) {
             }}
             rows="4"
             className="w-full p-2.5 text-sm text-gray-900 bg-slate-200 rounded-lg border border-gray-300"
+            style={{ fontSize: 18, fontFamily: "Calibri" }}
             placeholder="Write your prompt here..."
             value={promptInput}
         />

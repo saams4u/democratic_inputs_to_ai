@@ -15,6 +15,10 @@ export default function Message({text: initialText, avatar, idx, author}) {
         return () => clearTimeout(timeout);
     }, [initialText, text]);
 
+    useEffect(() => {
+        window.scrollTo(0, document.body.scrollHeight);
+    }, [text]);
+
     const blinkingCursorClass = initialText.length === text.length ? "" : "blinking-cursor";
 
     return (
@@ -29,7 +33,7 @@ export default function Message({text: initialText, avatar, idx, author}) {
                 />
             </div>
             <div className="w-full">
-                <div className={blinkingCursorClass}>
+                <div className={blinkingCursorClass} style={{ fontSize: 18, fontFamily: "Calibri" }}>
                     {text}
                 </div>
             </div>
