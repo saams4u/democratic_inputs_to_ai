@@ -2,10 +2,10 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-export default function Message({text: initialText, avatar, idx, author}) {
+export default function Message({text: initialText = "", avatar, idx, author}) {
 
     const [text, setText] = useState(author === "ai" ? "" : initialText);
-    const bgColorClass = idx % 2 === 0 ? "bg-slate-100" : "bg-slate-200";
+    const bgColorClass = idx % 2 === 0 ? "bg-white" : "bg-gray-50";
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -22,18 +22,18 @@ export default function Message({text: initialText, avatar, idx, author}) {
     const blinkingCursorClass = initialText.length === text.length ? "" : "blinking-cursor";
 
     return (
-        <div className={`flex flex-row ${bgColorClass} p-4`}>
+        <div className={`flex flex-row ${bgColorClass} p-4 rounded-lg border-b border-gray-200`}>
             <div className="w-[30px] relative mr-4">
                 <Image 
                     src={avatar}
                     width={30}
                     height={30}
                     alt=""
-                    style={{ borderRadius: '5px' }}
+                    className="rounded-full"
                 />
             </div>
             <div className="w-full">
-                <div className={blinkingCursorClass} style={{ fontSize: 18, fontFamily: "Calibri" }}>
+                <div className={`${blinkingCursorClass} text-gray-700 font-medium`} style={{ fontSize: 18, fontFamily: "Calibri" }}>
                     {text}
                 </div>
             </div>
