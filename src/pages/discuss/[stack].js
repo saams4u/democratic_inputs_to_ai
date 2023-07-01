@@ -1,7 +1,7 @@
 
 import stacks from "@/data/stacks.json";
 import { useEffect, useRef, useState } from "react";
-import useUser from "@/hooks/useUser";
+import { getSession } from "next-auth/react";
 
 import Header from '@/components/Header';
 import Message from '@/components/Message';
@@ -98,20 +98,20 @@ export default function Stack({stack, stackKey}) {
     )
 }
 
-export async function getStaticPaths() {
-    const paths = Object.keys(stacks).map((key) => ({params: {stack: key}}));
-
-    return {
-        paths,
-        fallback: false
+export async function getServerSideProps(context) {
+    const session = await getSession(context)
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        }
     }
-}
-
-export async function getStaticProps({params}) {
     return {
         props: {
-            stack: stacks[params.stack],
-            stackKey: params.stack
+            stack: stacks[context.params.stack],
+            stackKey: context.params.stack
         }
     }
 }
