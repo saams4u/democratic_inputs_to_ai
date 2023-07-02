@@ -1,29 +1,32 @@
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 
-export default function Message({text: initialText = "", avatar, idx, author}) {
-
+export default function Message({text: initialText, avatar, idx, author}) {
     const [text, setText] = useState(author === "ai" ? "" : initialText);
-    const bgColorClass = idx % 2 === 0 ? "bg-white" : "bg-gray-50";
-
+    const messageEndRef = useRef(null);
+    const blinkingCursorClass = initialText.length === text.length ? "" : "blinking-cursor";
+    const bgColorClass = idx % 2 === 0 ? "bg-white" : "bg-gray-100";
+  
     useEffect(() => {
         const timeout = setTimeout(() => {
-            setText(initialText.slice(0, text.length + 1));
-        }, 10);
-
-        return () => clearTimeout(timeout);
+        setText(initialText.slice(0, text.length + 1));
+      }, 1);
+      return () => clearTimeout(timeout);
     }, [initialText, text]);
-
+  
     useEffect(() => {
-        window.scrollTo(0, document.body.scrollHeight);
+      messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [text]);
 
-    const blinkingCursorClass = initialText.length === text.length ? "" : "blinking-cursor";
-
     return (
-        <div className={`flex flex-row ${bgColorClass} p-4 rounded-lg border-b border-gray-200`}>
-            <div className="w-[30px] relative mr-4">
+        <motion.div 
+            layout
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`w-full flex flex-row ${bgColorClass} p-6 border-b border-gray-200 shadow-sm transition-all scrollbar-hidden`}>
+            <div className="w-[50px] relative mr-4">
                 <Image 
                     src={avatar}
                     width={30}
@@ -33,10 +36,11 @@ export default function Message({text: initialText = "", avatar, idx, author}) {
                 />
             </div>
             <div className="w-full">
-                <div className={`${blinkingCursorClass} text-gray-700 font-medium`} style={{ fontSize: 18, fontFamily: "Calibri" }}>
+                <div className={`${blinkingCursorClass} text-black-700 font-medium text-lg`} style={{ fontFamily: "Roboto" }}>
                     {text}
                 </div>
             </div>
-        </div>
+            <div ref={messageEndRef} />
+        </motion.div>
     )
 }

@@ -2,6 +2,7 @@
 import stacks from "@/data/stacks.json";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from 'framer-motion';  // Add this line
 
 import { useSession } from 'next-auth/react';
 
@@ -9,27 +10,30 @@ function Home() {
   const { data: session } = useSession();
 
   const renderStacks = () => {
-    if (session) { // Display stacks when user exists and data has finished loading
+    if (session) { 
       return (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-4 gap-8">
           {Object.keys(stacks).map((stackKey) => {
             const stack = stacks[stackKey];
             return (
               <Link legacyBehavior key={stack.href} href={stack.href}>
-                <a className={`${stack.hoverClass} relative border-4 border-solid mr-11 mb-2 rounded-lg`}>
+                <motion.a 
+                  whileHover={{ scale: 1.1 }} // Add animation for hover
+                  className={`${stack.hoverClass} relative border-2 border-solid mr-4 mb-4 rounded-xl p-4 shadow-xl hover:shadow-xl transition-shadow duration-200 cursor-pointer`}>
                   <Image 
                     title={stack.name}
                     src={stack.logo} 
-                    className="rounded-lg" 
+                    className="rounded-xl" 
                     alt={stack.name} 
-                    width={135}
-                    height={135}
+                    width={120}
+                    height={120}
                   />
-                </a>
+                </motion.a>
               </Link>
             );
           })}
         </div>
+
       )
     } else {
       return null;
@@ -37,11 +41,11 @@ function Home() {
   }
 
   return (
-    <div className="h-6/7 p-11 flex justify-center items-center flex-col text-gray-700">
+    <div className="h-6/7 p-12 flex justify-center items-center flex-col text-gray-700 font-light">
       <a target="_blank" href="https://openai.com/blog/democratic-inputs-to-ai" className="text-blue-500 hover:text-blue-700 transition-colors">
-        <h1 className="pt-4 pb-4 text-4xl font-semibold mb-4">Democratic Inputs to AI: Policy Topics</h1>
+        <h1 className="pt-2 text-4xl mt-2 font-semibold mb-6 tracking-wider" style={{ fontFamily: "Roboto" }}>Democratic Inputs to AI: Policy Topics</h1>
       </a>
-      <div className="w-4/5 pb-11 text-center mb-8 px-4" style={{ fontSize: 18 }}>
+      <div className="w-4/5 pb-12 text-center px-6 text-lg leading-relaxed" style={{ fontSize: 18, fontFamily: "Roboto" }}>
         Welcome to our initiative to democratize AI! OpenAI is launching a program 
         to fund experiments in setting up a democratic process for deciding what rules 
         AI systems should follow. We believe that AI behavior should be shaped by 
@@ -51,8 +55,8 @@ function Home() {
         these decisions. We are seeking teams from across the world to develop proof-of-concepts 
         for this democratic process. We hope to learn from these experiments and use them 
         as the basis for a more global and ambitious process going forward. Let&apos;s work 
-        together to ensure AGI benefits all of humanity. <b>Please login or register to 
-        access the chatbot discussion topics that appear (or will appear) below.</b>
+        together to ensure AGI benefits all of humanity. <span className="font-bold">Please 
+        login or register to access the chatbot discussion topics that appear (or will appear) below.</span>
       </div>
       <div>
         {renderStacks()}

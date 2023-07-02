@@ -31,7 +31,3 @@ html, body, #__next {
   background: #859596;
   -webkit-border-radius: 1ex;
 }
-
-::-webkit-scrollbar-corner {
-  background: #000;
-}

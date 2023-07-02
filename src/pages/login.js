@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
@@ -17,14 +16,12 @@ export default function Login() {
   const router = useRouter();
   const { error } = router.query;
 
-  // Redirect if the user is already logged in
   useEffect(() => {
     if (session) {
       router.push("/");
     }
   }, [session, router]);
 
-  // Map error code to error message
   useEffect(() => {
     if (error === 'CredentialsSignin')
       setErrorLogin('Failed to sign in. Please check your credentials and try again.');
@@ -41,45 +38,49 @@ export default function Login() {
     signIn('credentials', {
       username,
       password,
-      callbackUrl: `${window.location.origin}/`, // callback URL upon successful sign in
+      callbackUrl: `${window.location.origin}/`,
     }).catch(console.error);
   };
 
   return (
-    <div className="h-5/6 flex items-center justify-center bg-gradient-to-r from-green-400 via-blue-500 to-purple-500">
-      <div className="w-full max-w-sm p-6 m-4 bg-gray-100 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center text-gray-700 mb-4">Login</h1>
-        {errorEmpty && <p className="text-red-500 text-center">{errorEmpty}</p>}
-        {errorLogin && <p className="text-red-500 text-center">{errorLogin}</p>}
-          <form onSubmit={handleLogin}>
-            <label className="block mb-2">
-              <span className="text-sm text-gray-700">Username</span>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-3 py-2 mt-1 text-sm text-gray-700 border rounded-md focus:outline-none focus:shadow-outline"
-              />
-            </label>
-            <label className="block mb-2">
-              <span className="text-sm text-gray-700">Password</span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 mt-1 text-sm text-gray-700 border rounded-md focus:outline-none focus:shadow-outline"
-              />
-            </label>
-            <button type="submit" className="w-full px-3 py-2 mt-4 text-sm font-bold text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline">
-              Login
-            </button>
-          </form>
-          <Link legacyBehavior href="/register">
-            <a className="mt-4 text-sm text-blue-500 hover:text-blue-600 text-center block">
-              Don't have an account? Register
-            </a>
-          </Link>
-        </div>
+    <div className="h-full flex items-center justify-center bg-gradient-to-r from-green-400 via-blue-500 to-purple-500">
+      <div className="w-full max-w-md p-8 m-4 bg-white rounded-xl shadow-lg">
+        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h1>
+        {(errorEmpty || errorLogin) && (
+          <div className="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
+            <p className="font-bold">Error</p>
+            <p>{errorEmpty || errorLogin}</p>
+          </div>
+        )}
+        <form onSubmit={handleLogin}>
+          <label className="block mb-4">
+            <span className="text-sm text-gray-600">Username</span>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-4 py-2 mt-2 text-sm text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+          </label>
+          <label className="block mb-6">
+            <span className="text-sm text-gray-600">Password</span>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 mt-2 text-sm text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+          </label>
+          <button type="submit" className="w-full px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            Login
+          </button>
+        </form>
+        <Link legacyBehavior href="/register">
+          <a className="mt-4 text-sm text-blue-600 hover:text-blue-700 text-center block">
+            Don't have an account? Register
+          </a>
+        </Link>
+      </div>
     </div>
   );
 }
