@@ -25,8 +25,8 @@ export default function Message({text: initialText, avatar, idx, author}) {
             layout
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className={`w-full flex flex-row ${bgColorClass} p-6 border-b border-gray-200 shadow-sm transition-all scrollbar-hidden`}>
-            <div className="w-[50px] relative mr-4">
+            className={`w-full flex flex-row ${bgColorClass} p-4 border-b border-gray-200 shadow-sm transition-all scrollbar-hidden`}>
+            <div className="w-[50px] relative">
                 <Image 
                     src={avatar}
                     width={30}
@@ -35,8 +35,10 @@ export default function Message({text: initialText, avatar, idx, author}) {
                     className="rounded-full"
                 />
             </div>
-            <div className="w-full">
-                <div className={`${blinkingCursorClass} text-black-700 font-medium text-lg`} style={{ fontFamily: "Roboto" }}>
+            <div className="w-full mt-auto mb-auto">
+                <div 
+                    className={`${blinkingCursorClass} text-black-700 font-medium text-lg`} 
+                    style={{ fontFamily: "Roboto", fontSize: 16 }}>
                     {text}
                 </div>
             </div>

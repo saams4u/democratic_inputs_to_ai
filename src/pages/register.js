@@ -57,14 +57,14 @@ export default function Register() {
       <div className="w-full max-w-md p-8 m-4 bg-white rounded-xl shadow-lg">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Register</h1>
         {errorMessage && (
-          <div className="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
+          <div className="mb-4 text-center bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
             <p className="font-bold">Error</p>
             <p>{errorMessage}</p>
           </div>
         )}
         <form onSubmit={handleRegister}>
           <label className="block mb-4">
-            <span className="text-sm text-gray-600">Email</span>
+            <span className="text-sm font-semibold text-gray-600">Email</span>
             <input
               type="email"
               value={email}
@@ -73,7 +73,7 @@ export default function Register() {
             />
           </label>
           <label className="block mb-4">
-            <span className="text-sm text-gray-600">Username</span>
+            <span className="text-sm font-semibold text-gray-600">Username</span>
             <input
               type="text"
               value={username}
@@ -82,7 +82,7 @@ export default function Register() {
             />
           </label>
           <label className="block mb-4">
-            <span className="text-sm text-gray-600">Password</span>
+            <span className="text-sm font-semibold text-gray-600">Password</span>
             <input
               type="password"
               value={password}
@@ -91,7 +91,7 @@ export default function Register() {
             />
           </label>
           <label className="block mb-6">
-            <span className="text-sm text-gray-600">Confirm Password</span>
+            <span className="text-sm font-semibold text-gray-600">Confirm Password</span>
             <input
               type="password"
               value={confirmPassword}
@@ -104,7 +104,7 @@ export default function Register() {
           </button>
         </form>
         <Link legacyBehavior href="/login">
-            <a className="mt-4 text-sm text-blue-500 hover:text-blue-600 text-center block">
+            <a className="mt-4 text-sm font-semibold text-blue-500 hover:text-blue-600 text-center block">
                 Already have an account? Login
             </a>
         </Link>

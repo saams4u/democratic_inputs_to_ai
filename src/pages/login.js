@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
@@ -47,14 +48,14 @@ export default function Login() {
       <div className="w-full max-w-md p-8 m-4 bg-white rounded-xl shadow-lg">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Login</h1>
         {(errorEmpty || errorLogin) && (
-          <div className="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
+          <div className="mb-4 text-center bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md" role="alert">
             <p className="font-bold">Error</p>
             <p>{errorEmpty || errorLogin}</p>
           </div>
         )}
         <form onSubmit={handleLogin}>
           <label className="block mb-4">
-            <span className="text-sm text-gray-600">Username</span>
+            <span className="text-sm font-semibold text-gray-600">Username</span>
             <input
               type="text"
               value={username}
@@ -63,7 +64,7 @@ export default function Login() {
             />
           </label>
           <label className="block mb-6">
-            <span className="text-sm text-gray-600">Password</span>
+            <span className="text-sm font-semibold text-gray-600">Password</span>
             <input
               type="password"
               value={password}
@@ -76,7 +77,7 @@ export default function Login() {
           </button>
         </form>
         <Link legacyBehavior href="/register">
-          <a className="mt-4 text-sm text-blue-600 hover:text-blue-700 text-center block">
+          <a className="mt-4 text-sm font-semibold text-blue-600 hover:text-blue-700 text-center block">
             Don't have an account? Register
           </a>
         </Link>

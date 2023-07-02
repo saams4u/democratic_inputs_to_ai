@@ -13,7 +13,7 @@ const configuration = new Configuration({
 
 const USER_NAME = "Human";
 const AI_NAME = "EquiBot";
-const MEMORY_SIZE = 6;
+const MEMORY_SIZE = 20;
 
 export default withNextSession(async (req, res) => {
     if (req.method === "POST") {
