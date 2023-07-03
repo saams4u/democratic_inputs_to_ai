@@ -94,20 +94,17 @@ export default function Stack({stack, stackKey}) {
         )
     }
 
-export async function getServerSideProps(context) {
-    const session = await getSession(context)
-    if (!session) {
+    Stack.getInitialProps = async (context) => {
+        const session = await getSession(context);
+        if (!session) {
+            context.res.writeHead(302, {
+                Location: '/login',
+            });
+            context.res.end();
+            return {};
+        }
         return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
+            stack: stacks[context.query.stack],
+            stackKey: context.query.stack
         }
-    }
-    return {
-        props: {
-            stack: stacks[context.params.stack],
-            stackKey: context.params.stack
-        }
-    }
-}
+    }    
