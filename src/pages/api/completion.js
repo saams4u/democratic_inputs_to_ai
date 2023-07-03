@@ -16,13 +16,11 @@ const USER_NAME = "Human";
 const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
-// Create a new Queue instance
 const openaiQueue = new Queue('openai', process.env.REDIS_URL);
 
-// Move API call to a separate job processor
 openaiQueue.process(async (job) => {
     try {
-        const { stack, user, prompt, topic, db } = job.data;
+        const { stack, user, prompt, topic } = job.data;
 
         const aiPrompt = bots[stack].prompt;
         const openai = new OpenAIApi(configuration);
@@ -38,6 +36,8 @@ openaiQueue.process(async (job) => {
         });
 
         const aiResponse = (completion.data.choices[0].message.content).trim();
+
+        const db = await dbConnect();
         db.data.messageHistory[user.uid].push(`${AI_NAME}: ${aiResponse}\n`);
 
         if (db.data.messageHistory[user.uid].length > MEMORY_SIZE) {

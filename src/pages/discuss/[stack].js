@@ -41,24 +41,31 @@ export default function Stack({stack, stackKey}) {
                 "Content-type": "application/json"
             }
         });
-
-        const json = await response.json();
         
         if (response.ok) {
-            setMessages((messages) => [
-                ...messages,
-                {
-                    id: new Date().toISOString(),
-                    author: "ai",
-                    avatar: "/logos/openai.png",
-                    text: json.result
-                }
-            ]);
-            setIsTyping(false); 
+            const text = await response.text();
+            if (text.length) { // Check if there is any text
+                const json = JSON.parse(text);
+                console.log(json);
+            
+                setMessages((messages) => [
+                    ...messages,
+                    {
+                        id: new Date().toISOString(),
+                        author: "ai",
+                        avatar: "/logos/openai.png",
+                        text: json.result
+                    }
+                ]);
+            } else {
+                console.log('Response body is empty');
+            }
+            setIsTyping(false);  // Moved this outside the 'if (text.length)' condition
         } else {
-            console.error(json?.error?.message);
-        }
-    }
+            console.error('Server response was not ok');
+            setIsTyping(false);  // This will ensure UI updates even when the server response is not OK
+        }        
+    }        
 
     return (
         <div className="h-full flex flex-col">
