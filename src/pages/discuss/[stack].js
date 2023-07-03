@@ -114,6 +114,7 @@ Stack.getInitialProps = async (context) => {
         return {};
     }
 
+    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
     const res = await axios.get(`${baseUrl}/data.json`);
     const stacks = res.data;
 
