@@ -31,50 +31,47 @@ export default function Stack({stack, stackKey}) {
         chatRef.current.scrollTo(0, chatRef.current.scrollHeight);
     }, [messages]);
 
-    const onSubmit = async(prompt) => {
-        if (prompt.trim().length === 0) { 
-            return;
+    const onSubmit = async (prompt) => {
+        if (prompt.trim().length === 0) {
+          return;
         }
-
+    
         setMessages((messages) => {
+          return [
+            ...messages,
+            {
+              id: new Date().toISOString(),
+              author: "human",
+              avatar: "https://thrangra.sirv.com/Avatar2.png",
+              text: prompt
+            }
+          ]
+        });
+    
+        const response = await fetch(`/api/completion?stack=${stackKey}`, {
+          method: "POST",
+          body: JSON.stringify({prompt}),
+          headers: {
+            "Content-type": "application/json"
+          }
+        });
+    
+        const json = await response.json();
+        
+        if (response.ok) {
+          setMessages((messages) => {
             return [
               ...messages,
               {
                 id: new Date().toISOString(),
-                author: "human",
-                avatar: "https://upload.wikimedia.org/wikipedia/commons/7/70/User_icon_BLACK-01.png",
-                text: prompt
+                author: "ai",
+                avatar: "/logo-open-ai.png",
+                text: json.result
               }
             ]
           });
-
-        try {
-            const response = await fetch(`/api/completion?stack=${stackKey}`, {
-                method: "POST",
-                body: JSON.stringify({prompt}),
-                headers: {
-                    "Content-type": "application/json"
-                }
-            });
-
-            const json = await response.json();
-
-            if (response.ok) {        
-                setMessages((messages) => [
-                    ...messages,
-                    {
-                        id: new Date().toISOString(),
-                        author: "ai",
-                        avatar: "/logos/openai.png",
-                        text: json.result
-                    }
-                ]);
-            } else {
-                console.log('Response was not OK, or was empty.');
-            }
-
-        } catch (error) {
-            console.error(error);
+        } else {
+          console.error(json?.error?.message);
         }
     }        
 
