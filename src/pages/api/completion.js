@@ -27,6 +27,14 @@ export default withNextSession(async (req, res) => {
     const bots = JSON.parse(botsContent);   
     const stacks = JSON.parse(stacksContent);
 
+    let topic = stacks[stackKey]?.topic;
+
+    if (req.method === "GET") {
+        if (!topic) {
+            return res.status(400).json({ error: { message: "Invalid stackKey value" } });
+        }
+    }
+
     if (req.method === "POST") {
         const { stackKey } = req.query;
         const body = req.body;
@@ -39,12 +47,6 @@ export default withNextSession(async (req, res) => {
 
         if (!user) {
             return res.status(500).json({error: {message: "Session is missing!"}});
-        }
-
-        let topic = stacks[stackKey]?.topic;
-        
-        if (!topic) {
-            return res.status(400).json({ error: { message: "Invalid stackKey value" } });
         }
 
         try {
