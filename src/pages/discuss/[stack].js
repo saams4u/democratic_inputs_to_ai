@@ -43,7 +43,7 @@ export default function Stack({stack, stackKey}) {
         ]);
 
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/completion?stack=${stackKey}`, {
+            const response = await axios.post(`${baseUrl}/api/completion?stack=${stackKey}`, {
                 stackKey,
                 prompt
             });
