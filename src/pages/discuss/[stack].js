@@ -118,14 +118,14 @@ export default function Stack({stack, stackKey}) {
     )
 }
 
-Stack.getInitialProps = async (context) => {
+export async function getServerSideProps(context) {
     const session = await getSession(context);
+    
     if (!session) {
         context.res.writeHead(302, {
             Location: '/login',
         });
         context.res.end();
-        return {};
     }
     
     const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
@@ -134,7 +134,9 @@ Stack.getInitialProps = async (context) => {
     const stacks = await res.json();
 
     return {
-        stack: stacks[context.query.stack],
-        stackKey: context.query.stack
+        props: {
+            stack: stacks[context.query.stack],
+            stackKey: context.query.stack
+        },
     }
-}  
+}
