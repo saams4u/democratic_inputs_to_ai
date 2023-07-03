@@ -5,9 +5,6 @@ import { cors, runMiddleware } from './middleware';
 import { withNextSession } from "@/lib/session";
 import { dbConnect } from "@/lib/lowDb";
 
-import { promises as fs } from 'fs';
-import path from 'path';
-
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
 });
@@ -19,24 +16,13 @@ const MEMORY_SIZE = 6;
 export default withNextSession(async (req, res) => {
     await runMiddleware(req, res, cors);
     
-    const jsonDirectory = path.join(process.cwd(), 'public');        
+    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
 
-    const stacksContent = await fs.readFile(jsonDirectory + '/data.json', 'utf8');    
-    const botsContent = await fs.readFile(jsonDirectory + '/bots.json', 'utf8');
+    const stacksContent = await fetch(`${baseUrl}/data/stacks.json`);
+    const botsContent = await fetch(`${baseUrl}/data/bots.json`);
 
-    const bots = JSON.parse(botsContent);   
-    const stacks = JSON.parse(stacksContent);
-
-    if (req.method === "GET") {
-        const { stackKey } = req.query;
-
-        if (!stackKey || !stacks[stackKey]) {
-            return res.status(400).json({ error: { message: "Invalid stackKey value" } });
-        }
-
-        let topic = stacks[stackKey].topic;
-        return res.status(200).json({ topic });
-    }
+    const stacks = await stacksContent.json();
+    const bots = await botsContent.json();
     
     if (req.method === "POST") {
         const { stackKey } = req.query;

@@ -2,8 +2,6 @@
 import { useRef, useState, useEffect } from "react";
 import { getSession } from "next-auth/react";
 
-import axios from 'axios';
-
 import Header from '@/components/Header';
 import Message from '@/components/Message';
 import Prompt from '@/components/Prompt';
@@ -12,11 +10,10 @@ export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false); 
     const chatRef = useRef(null);
-    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
 
     useEffect(() => {
         const cleanChatHistory = async () => {
-            await axios.delete(`${baseUrl}/api/completion`);
+            await fetch("/api/completion", {method: "DELETE"});
         }
         cleanChatHistory();
     }, []);
@@ -43,13 +40,15 @@ export default function Stack({stack, stackKey}) {
         ]);
 
         try {
-            const response = await axios.post(`${baseUrl}/api/completion?stack=${stackKey}`, {
-                stackKey,
-                prompt
+            const response = await fetch(`/api/completion?stack=${stackKey}`, {
+                method: "POST",
+                body: JSON.stringify({prompt}),
+                headers: {
+                    "Content-type": "application/json"
+                }
             });
-        
+    
             const json = response.data;
-            console.log(json);
         
             setMessages((messages) => [
                 ...messages,
@@ -105,7 +104,6 @@ export default function Stack({stack, stackKey}) {
 
 Stack.getInitialProps = async (context) => {
     const session = await getSession(context);
-
     if (!session) {
         context.res.writeHead(302, {
             Location: '/login',
@@ -113,10 +111,11 @@ Stack.getInitialProps = async (context) => {
         context.res.end();
         return {};
     }
-
+    
     const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
-    const res = await axios.get(`${baseUrl}/data.json`);
-    const stacks = res.data;
+
+    const res = await fetch(`${baseUrl}/data/stacks.json`);
+    const stacks = await res.json();
 
     return {
         stack: stacks[context.query.stack],

@@ -1,19 +1,18 @@
 
 import { useEffect, useState } from "react";
-import axios from 'axios';
 
 export default function useUser() {
-    const [user, setUser] = useState(null);
-    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
+  const [user, setUser] = useState(null);
 
-    useEffect(() => {
-        const getUser = async () => {
-            const res = await axios.get(`${baseUrl}/api/user`);
-            setUser(res.data);
-        }
+  useEffect(() => {
+    const getUser = async () => {
+      const res = await fetch("/api/user");
+      const data = await res.json();
+      setUser(data);
+    }
 
-        getUser()
-    }, []);
+    getUser();
+  }, []);
 
-    return {user}
+  return {user}
 }
