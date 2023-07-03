@@ -15,11 +15,11 @@ const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
 export default withNextSession(async (req, res) => {
+    
     if (req.method === "POST") {
-        const { stack } = req.query;
+        const { stackKey } = req.query;
         const body = req.body;
         const prompt = body.prompt || "";
-        const stackKey = req.body.stackKey;
 
         const jsonDirectory = path.join(process.cwd(), 'public');
 
@@ -42,7 +42,7 @@ export default withNextSession(async (req, res) => {
         let topic = stacks[stackKey]?.topic;
         
         if (!topic) {
-            return res.status(400).json({ error: { message: "Invalid topicKey value" } });
+            return res.status(400).json({ error: { message: "Invalid stackKey value" } });
         }
 
         try {
@@ -51,7 +51,7 @@ export default withNextSession(async (req, res) => {
             db.data.messageHistory[user.uid] ||= [];
             db.data.messageHistory[user.uid].push(`${USER_NAME}: ${prompt}\n`);
 
-            const aiPrompt = bots[stack]?.prompt;
+            const aiPrompt = bots[stackKey]?.prompt;
             const openai = new OpenAIApi(configuration);
 
             const completion = await openai.createChatCompletion({
@@ -72,8 +72,8 @@ export default withNextSession(async (req, res) => {
             }
 
             await db.write();
-
             return res.status(200).json({result: aiResponse});
+
         } catch(e) {
             console.log(e.message);
             return res.status(500).json({error: {message: e.message}});
@@ -91,8 +91,8 @@ export default withNextSession(async (req, res) => {
         };
 
         await req.session.save();
-
         return res.status(200).json(uid);
+
     } else if (req.method === "DELETE") {
         const { user } = req.session;
 
@@ -101,11 +101,11 @@ export default withNextSession(async (req, res) => {
             db.data.messageHistory[user.uid] = [];
 
             await db.write();
-
             return res.status(200).json({message: "History cleared!"});
         }
 
         return res.status(200).json({message: "Nothing to clear!"});
+
     } else {
         return res.status(500).json({error: {message: "Invalid API Route"}});
     }
