@@ -19,7 +19,7 @@ export default withNextSession(async (req, res) => {
         const { stack } = req.query;
         const body = req.body;
         const prompt = body.prompt || "";
-        const href = req.body.href;
+        const stackKey = req.body.stackKey;
 
         const jsonDirectory = path.join(process.cwd(), 'public');
 
@@ -39,14 +39,7 @@ export default withNextSession(async (req, res) => {
             return res.status(500).json({error: {message: "Session is missing!"}});
         }
 
-        let topic;
-
-        for (let topicKey in stacks) {
-            if (topicKey == href.slice(-7)) {
-                topic = stacks[topicKey].topic;
-                break;
-            }
-        }
+        let topic = stacks[stackKey]?.topic;
         
         if (!topic) {
             return res.status(400).json({ error: { message: "Invalid topicKey value" } });
@@ -58,7 +51,7 @@ export default withNextSession(async (req, res) => {
             db.data.messageHistory[user.uid] ||= [];
             db.data.messageHistory[user.uid].push(`${USER_NAME}: ${prompt}\n`);
 
-            const aiPrompt = bots[stack].prompt;
+            const aiPrompt = bots[stack]?.prompt;
             const openai = new OpenAIApi(configuration);
 
             const completion = await openai.createChatCompletion({
@@ -77,6 +70,8 @@ export default withNextSession(async (req, res) => {
             if (db.data.messageHistory[user.uid].length > MEMORY_SIZE) {
                 db.data.messageHistory[user.uid].splice(0,2);
             }
+
+            await db.write();
 
             return res.status(200).json({result: aiResponse});
         } catch(e) {
@@ -104,6 +99,8 @@ export default withNextSession(async (req, res) => {
         if (user) {
             const db = await dbConnect();
             db.data.messageHistory[user.uid] = [];
+
+            await db.write();
 
             return res.status(200).json({message: "History cleared!"});
         }

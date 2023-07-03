@@ -43,7 +43,7 @@ export default function Stack({stack, stackKey}) {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/completion?stack=${stackKey}`, {
                 method: "POST",
                 body: JSON.stringify({
-                    href: window.location.href,
+                    stackKey,
                     prompt
                 }),
                 headers: {
@@ -124,7 +124,6 @@ Stack.getInitialProps = async (context) => {
         return {};
     }
     
-    // Fetch the stacks JSON data
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/data.json`);
     const stacks = await res.json();
 
