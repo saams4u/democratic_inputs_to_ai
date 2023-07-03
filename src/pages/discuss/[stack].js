@@ -2,6 +2,8 @@
 import { useRef, useState, useEffect } from "react";
 import { getSession } from "next-auth/react";
 
+import axios from 'axios';
+
 import Header from '@/components/Header';
 import Message from '@/components/Message';
 import Prompt from '@/components/Prompt';
@@ -40,42 +42,28 @@ export default function Stack({stack, stackKey}) {
         ]);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/completion?stack=${stackKey}`, {
-                method: "POST",
-                body: JSON.stringify({
-                    stackKey,
-                    prompt
-                }),
-                headers: {
-                    "Content-type": "application/json"
-                }
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/completion?stack=${stackKey}`, {
+                stackKey,
+                prompt
             });
-            
-            if (response.ok) {
-                const text = await response.text();
-                if (text.length) { 
-                    const json = JSON.parse(text);
-                    console.log(json);
-                
-                    setMessages((messages) => [
-                        ...messages,
-                        {
-                            id: new Date().toISOString(),
-                            author: "ai",
-                            avatar: "/logos/openai.png",
-                            text: json.result
-                        }
-                    ]);
-                } else {
-                    console.log('Response body is empty');
+        
+            const json = response.data;
+            console.log(json);
+        
+            setMessages((messages) => [
+                ...messages,
+                {
+                    id: new Date().toISOString(),
+                    author: "ai",
+                    avatar: "/logos/openai.png",
+                    text: json.result
                 }
-            } else if (!response.ok) {
-                throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
-            }            
+            ]);
+            
         } catch (error) {
             console.error(error);
             setIsTyping(false); 
-        }        
+        }      
     }        
 
     return (
@@ -124,8 +112,8 @@ Stack.getInitialProps = async (context) => {
         return {};
     }
     
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/data.json`);
-    const stacks = await res.json();
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/data.json`);
+    const stacks = res.data;
 
     return {
         stack: stacks[context.query.stack],
