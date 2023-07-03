@@ -26,14 +26,14 @@ export default function NavBar() {
                     <>
                         <button
                             onClick={() => router.push("/login")}
-                            className="mr-8 font-semibold text-white bg-transparent border border-white rounded-xl px-6 py-2 hover:bg-white hover:text-indigo-700 transition-all duration-300 cursor-pointer"
+                            className="mr-8 font-semibold text-white bg-transparent border border-white rounded-lg px-6 py-2 hover:bg-white hover:text-indigo-700 transition-all duration-300 cursor-pointer"
                             style={{ fontFamily: "Roboto", fontSize: 18 }} 
                         >
                             Login
                         </button>
                         <button
                             onClick={() => router.push("/register")}
-                            className="px-6 py-2 font-semibold text-white bg-indigo-500 rounded-xl hover:bg-indigo-400 transition-all duration-300 cursor-pointer"
+                            className="px-6 py-2 font-semibold text-white bg-indigo-500 rounded-lg hover:bg-indigo-400 transition-all duration-300 cursor-pointer"
                             style={{ fontFamily: "Roboto", fontSize: 18 }} 
                         >
                             Register
@@ -43,7 +43,7 @@ export default function NavBar() {
                 {session && (
                     <button 
                         onClick={handleLogoutClick} 
-                        className="px-6 py-2 font-semibold text-white bg-red-500 rounded-xl hover:bg-red-400 transition-all duration-300 cursor-pointer"
+                        className="px-6 py-2 font-semibold text-white bg-red-500 rounded-lg hover:bg-red-400 transition-all duration-300 cursor-pointer"
                         style={{ fontFamily: "Roboto", fontSize: 18 }}
                         >
                         Logout

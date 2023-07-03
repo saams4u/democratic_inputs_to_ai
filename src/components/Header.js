@@ -15,7 +15,7 @@ export default function Header({ logo, name, topic }) {
           width={110} // slightly smaller logo
           height={110} 
           alt={name}
-          className="rounded-xl p-0 mt-8 ml-36" // round image and add padding
+          className="rounded-xl p-0 mt-8 ml-36 shadow-custom" // round image and add padding, apply custom shadow class
         />
       </motion.div>
       <div

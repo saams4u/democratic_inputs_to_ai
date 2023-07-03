@@ -31,3 +31,7 @@ html, body, #__next {
   background: #859596;
   -webkit-border-radius: 1ex;
 }
+
+.shadow-custom {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}

@@ -7,7 +7,7 @@ export default function Message({text: initialText, avatar, idx, author}) {
     const [text, setText] = useState(author === "ai" ? "" : initialText);
     const messageEndRef = useRef(null);
     const blinkingCursorClass = initialText.length === text.length ? "" : "blinking-cursor";
-    const bgColorClass = idx % 2 === 0 ? "bg-white" : "bg-gray-100";
+    const bgColorClass = idx % 2 === 0 ? "bg-slate-100" : "bg-slate-200";
   
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -32,7 +32,7 @@ export default function Message({text: initialText, avatar, idx, author}) {
                     width={30}
                     height={30}
                     alt=""
-                    className="rounded-full"
+                    className="rounded-md"
                 />
             </div>
             <div className="w-full mt-auto mb-auto">

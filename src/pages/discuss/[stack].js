@@ -61,7 +61,7 @@ export default function Stack({stack, stackKey}) {
     return (
         <div className="h-full flex flex-col">
             <Header logo={stack.logo} name={stack.name} topic={stack.topic} />
-            <div ref={chatRef} className="chat pl-44 pr-44 p-4 flex flex-col h-full overflow-scroll">
+            <div ref={chatRef} className="chat pl-44 pr-44 flex flex-col h-full overflow-scroll">
                 { messages.length === 0 && 
                     <div 
                         className="bg-yellow-200 p-4 mt-4 ml-auto mr-auto rounded-xl" 
