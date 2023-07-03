@@ -69,9 +69,9 @@ export default function Stack({stack, stackKey}) {
                 } else {
                     console.log('Response body is empty');
                 }
-            } else {
-                throw new Error('Server response was not ok');
-            }
+            } else if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+            }            
         } catch (error) {
             console.error(error);
             setIsTyping(false); 
