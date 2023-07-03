@@ -27,19 +27,28 @@ export default withNextSession(async (req, res) => {
     const bots = JSON.parse(botsContent);   
     const stacks = JSON.parse(stacksContent);
 
-    let topic = stacks[stackKey]?.topic;
-
     if (req.method === "GET") {
-        if (!topic) {
+        const { stackKey } = req.query;
+
+        if (!stackKey || !stacks[stackKey]) {
             return res.status(400).json({ error: { message: "Invalid stackKey value" } });
         }
-    }
 
+        let topic = stacks[stackKey].topic;
+        return res.status(200).json({ topic });
+    }
+    
     if (req.method === "POST") {
         const { stackKey } = req.query;
         const body = req.body;
         const prompt = body.prompt || "";
         const { user } = req.session;
+
+        if (!stackKey || !stacks[stackKey]) {
+            return res.status(400).json({ error: { message: "Invalid stackKey value" } });
+        }
+
+        let topic = stacks[stackKey].topic;
 
         if (!configuration.apiKey) {
             return res.status(500).json({error: {message: "OpenAI API Key is missing!"}});
