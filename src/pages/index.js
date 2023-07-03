@@ -33,7 +33,6 @@ function Home() {
             );
           })}
         </div>
-
       )
     } else {
       return null;

@@ -4,6 +4,7 @@ import { cors, runMiddleware } from './middleware';
 
 import { withNextSession } from "@/lib/session";
 import { dbConnect } from "@/lib/lowDb";
+import bots from "./bots.json";
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
@@ -16,25 +17,11 @@ const MEMORY_SIZE = 6;
 export default withNextSession(async (req, res) => {
     await runMiddleware(req, res, cors);
     
-    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
-
-    const stacksContent = await fetch(`${baseUrl}/data/stacks.json`);
-    const botsContent = await fetch(`${baseUrl}/data/bots.json`);
-
-    const stacks = await stacksContent.json();
-    const bots = await botsContent.json();
-    
     if (req.method === "POST") {
-        const { stackKey } = req.query;
+        const { stack } = req.query;
         const body = req.body;
         const prompt = body.prompt || "";
         const { user } = req.session;
-
-        if (!stackKey || !stacks[stackKey]) {
-            return res.status(400).json({ error: { message: "Invalid stackKey value" } });
-        }
-
-        let topic = stacks[stackKey].topic;
 
         if (!configuration.apiKey) {
             return res.status(500).json({error: {message: "OpenAI API Key is missing!"}});
@@ -50,7 +37,7 @@ export default withNextSession(async (req, res) => {
             db.data.messageHistory[user.uid] ||= [];
             db.data.messageHistory[user.uid].push(`${USER_NAME}: ${prompt}\n`);
 
-            const aiPrompt = bots[stackKey]?.prompt;
+            const aiPrompt = bots[stack].prompt;
             const openai = new OpenAIApi(configuration);
 
             const completion = await openai.createChatCompletion({
@@ -72,7 +59,6 @@ export default withNextSession(async (req, res) => {
 
             await db.write();
             return res.status(200).json({result: aiResponse});
-
         } catch(e) {
             console.log(e.message);
             return res.status(500).json({error: {message: e.message}});
@@ -91,7 +77,6 @@ export default withNextSession(async (req, res) => {
 
         await req.session.save();
         return res.status(200).json(uid);
-
     } else if (req.method === "DELETE") {
         const { user } = req.session;
 

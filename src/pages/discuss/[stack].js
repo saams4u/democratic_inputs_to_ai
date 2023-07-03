@@ -11,8 +11,6 @@ import useUser from "@/hooks/useUser";
 export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);
     const [activeSession, setActiveSession] = useState("");
-    const [isTyping, setIsTyping] = useState(false); 
-
     const {user} = useUser();
     const chatRef = useRef(null);
 
@@ -26,7 +24,6 @@ export default function Stack({stack, stackKey}) {
     useEffect(() => {
         if (user) {
           setActiveSession(user.uid);
-          console.log(activeSession);
         }
     }, [user]);
 
@@ -35,21 +32,21 @@ export default function Stack({stack, stackKey}) {
     }, [messages]);
 
     const onSubmit = async(prompt) => {
-        if (prompt.trim().length === 0 || isTyping) { 
+        if (prompt.trim().length === 0) { 
             return;
         }
 
-        setIsTyping(true); 
-
-        setMessages((messages) => [
-            ...messages,
-            {
+        setMessages((messages) => {
+            return [
+              ...messages,
+              {
                 id: new Date().toISOString(),
                 author: "human",
                 avatar: "https://upload.wikimedia.org/wikipedia/commons/7/70/User_icon_BLACK-01.png",
                 text: prompt
-            }
-        ]);
+              }
+            ]
+          });
 
         try {
             const response = await fetch(`/api/completion?stack=${stackKey}`, {
@@ -59,10 +56,10 @@ export default function Stack({stack, stackKey}) {
                     "Content-type": "application/json"
                 }
             });
-        
-            if (response.ok && response.headers.get("content-length") !== "0") {
-                const json = await response.json();
-        
+
+            const json = await response.json();
+
+            if (response.ok) {        
                 setMessages((messages) => [
                     ...messages,
                     {
@@ -78,7 +75,6 @@ export default function Stack({stack, stackKey}) {
 
         } catch (error) {
             console.error(error);
-            setIsTyping(false); 
         }
     }        
 
@@ -99,19 +95,13 @@ export default function Stack({stack, stackKey}) {
                         idx={i}
                         author={message.author}
                         avatar={message.avatar}
-                        text={message.text}
-                        onTypingDone={() => {
-                            if (message.author === 'ai') {
-                                setIsTyping(false);
-                            }
-                        }}            
+                        text={message.text}  
                     />
                 )}
             </div>
             <div className="flex p-4">
                 <Prompt 
                     onSubmit={onSubmit}
-                    disabled={isTyping}
                 />
             </div>
         </div>
