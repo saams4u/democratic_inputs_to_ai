@@ -48,7 +48,7 @@ export default function Stack({stack, stackKey}) {
                 }
             });
     
-            const json = response.data;
+            const json = response.json();
         
             setMessages((messages) => [
                 ...messages,
