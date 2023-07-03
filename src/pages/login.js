@@ -78,7 +78,7 @@ export default function Login() {
         </form>
         <Link legacyBehavior href="/register">
           <a className="mt-4 text-sm font-semibold text-blue-600 hover:text-blue-700 text-center block">
-            Don't have an account? Register
+            Don&apos;t have an account? Register
           </a>
         </Link>
       </div>
