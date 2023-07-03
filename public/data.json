@@ -1,0 +1,58 @@
+{
+    "topic_1": {
+        "href": "/discuss/topic_1",
+        "logo": "/logos/policy_1.png",
+        "topic": "How far do you think personalization of AI assistants like ChatGPT to align with a user's tastes and preferences should go? What boundaries, if any, should exist in this process?",
+        "name": "The Scope and Limits of AI Personalization",
+        "hoverClass": "hover:border-blue-500"
+    },
+    "topic_2": {
+        "href": "/discuss/topic_2",
+        "logo": "/logos/policy_2.png",
+        "topic": "How should AI assistants respond to questions about public figure viewpoints? Should they be neutral? Should they refuse to answer? Should they provide sources?",
+        "name": "AI Responses to Public Figure Viewpoints",
+        "hoverClass": "hover:border-red-500"
+    },
+    "topic_3": {
+        "href": "/discuss/topic_3",
+        "logo": "/logos/policy_3.png",
+        "topic": "Under what conditions, if any, should AI assistants be allowed to provide medical/financial/legal advice?",
+        "name": "AI Assistants and Professional Advice",
+        "hoverClass": "hover:border-green-500"
+    },
+    "topic_4": {
+        "href": "/discuss/topic_4",
+        "logo": "/logos/policy_4.png",
+        "topic": "In which cases, if any, should AI assistants offer emotional support to individuals?",
+        "name": "Emotional Support Roles of AI Assistants",
+        "hoverClass": "hover:border-yellow-500"
+    },
+    "topic_5": {
+        "href": "/discuss/topic_5",
+        "logo": "/logos/policy_5.png",
+        "topic": "Should joint vision-language models be permitted to identify people's gender, race, emotion, and identity/name from their images? Why or why not?",
+        "name": "Ethics of AI Image Identification",
+        "hoverClass": "hover:border-purple-500"
+    },
+    "topic_6": {
+        "href": "/discuss/topic_6",
+        "logo": "/logos/policy_6.png",
+        "topic": "When generative models create images for underspecified prompts like 'a CEO,' 'a doctor,' or 'a nurse,' they have the potential to produce either diverse or homogeneous outputs. How should AI models balance these possibilities? What factors should be prioritized when deciding the depiction of people in such cases?",
+        "name": "Balancing Diversity in AI-Generated Imagery",
+        "hoverClass": "hover:border-pink-500"
+    },
+    "topic_7": {
+        "href": "/discuss/topic_7",
+        "logo": "/logos/policy_7.png",
+        "topic": "What principles should guide AI when handling topics that involve both human rights and local cultural or legal differences, like LGBTQ rights and women's rights? Should AI responses change based on the location or culture in which it's used?",
+        "name": "AI, Cultural Sensitivity, and Human Rights",
+        "hoverClass": "hover:border-teal-500"
+    },
+    "topic_8": {
+        "href": "/discuss/topic_8",
+        "logo": "/logos/policy_8.png",
+        "topic": "Which categories of content, if any, do you believe creators of AI models should focus on limiting or denying? What criteria should be used to determine these restrictions?",
+        "name": "Criteria for Content Limitation in AI Models",
+        "hoverClass": "hover:border-orange-500"
+    } 
+}

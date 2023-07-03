@@ -1,6 +1,5 @@
 
-import stacks from "@/data/stacks.json";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { getSession } from "next-auth/react";
 
 import Header from '@/components/Header';
@@ -12,7 +11,16 @@ export default function Stack({stack, stackKey}) {
     const [isTyping, setIsTyping] = useState(false); 
     const chatRef = useRef(null);
 
-    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
+    useEffect(() => {
+        const cleanChatHistory = async () => {
+          await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/completion`, {method: "DELETE"});
+        }
+        cleanChatHistory();
+      }, []);
+    
+    useEffect(() => {
+        chatRef.current.scrollTo(0, chatRef.current.scrollHeight);
+    }, [messages]);
 
     const onSubmit = async(prompt) => {
         if (prompt.trim().length === 0 || isTyping) { 
@@ -31,39 +39,42 @@ export default function Stack({stack, stackKey}) {
             }
         ]);
 
-        const response = await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
-            method: "POST",
-            body: JSON.stringify({
-                href: window.location.href,
-                prompt
-            }),
-            headers: {
-                "Content-type": "application/json"
-            }
-        });
-        
-        if (response.ok) {
-            const text = await response.text();
-            if (text.length) { // Check if there is any text
-                const json = JSON.parse(text);
-                console.log(json);
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/completion?stack=${stackKey}`, {
+                method: "POST",
+                body: JSON.stringify({
+                    href: window.location.href,
+                    prompt
+                }),
+                headers: {
+                    "Content-type": "application/json"
+                }
+            });
             
-                setMessages((messages) => [
-                    ...messages,
-                    {
-                        id: new Date().toISOString(),
-                        author: "ai",
-                        avatar: "/logos/openai.png",
-                        text: json.result
-                    }
-                ]);
+            if (response.ok) {
+                const text = await response.text();
+                if (text.length) { 
+                    const json = JSON.parse(text);
+                    console.log(json);
+                
+                    setMessages((messages) => [
+                        ...messages,
+                        {
+                            id: new Date().toISOString(),
+                            author: "ai",
+                            avatar: "/logos/openai.png",
+                            text: json.result
+                        }
+                    ]);
+                } else {
+                    console.log('Response body is empty');
+                }
             } else {
-                console.log('Response body is empty');
+                throw new Error('Server response was not ok');
             }
-            setIsTyping(false);  // Moved this outside the 'if (text.length)' condition
-        } else {
-            console.error('Server response was not ok');
-            setIsTyping(false);  // This will ensure UI updates even when the server response is not OK
+        } catch (error) {
+            console.error(error);
+            setIsTyping(false); 
         }        
     }        
 
@@ -100,20 +111,27 @@ export default function Stack({stack, stackKey}) {
                 />
             </div>
         </div>
-        )
+    )
+}
+
+export async function getServerSideProps(context) {
+    const session = getSession(context.req);
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        }
     }
 
-    Stack.getInitialProps = async (context) => {
-        const session = await getSession(context);
-        if (!session) {
-            context.res.writeHead(302, {
-                Location: '/login',
-            });
-            context.res.end();
-            return {};
-        }
-        return {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/data.json`);
+    const stacks = await res.json();
+
+    return {
+        props: {
             stack: stacks[context.query.stack],
             stackKey: context.query.stack
-        }
-    }    
+        },
+    }
+}  

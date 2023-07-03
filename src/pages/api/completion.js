@@ -2,42 +2,47 @@
 import { Configuration, OpenAIApi } from "openai";
 import { withNextSession } from "@/lib/session";
 import { dbConnect } from "@/lib/lowDb";
-import bots from "./bots.json";
-import { promises as fs } from 'fs';
-import path from 'path';
 import { Queue } from 'bull';
-import runMiddleware, { cors } from '@/pages/api/middleware';
 
-const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY
-});
+import runMiddleware, { cors } from '@/pages/api/middleware';
+import fs from 'fs';
+import path from 'path';
+
+const botsFilePath = path.join(process.cwd(), 'public', 'bots.json');
+const botsData = fs.readFileSync(botsFilePath, 'utf8');
+const bots = JSON.parse(botsData);
 
 const USER_NAME = "Human";
 const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
+const configuration = new Configuration({
+    apiKey: process.env.OPENAI_API_KEY
+});
+
+const openai = new OpenAIApi(configuration);
 const openaiQueue = new Queue('openai', process.env.REDIS_URL);
 
 openaiQueue.process(async (job) => {
+    const db = await dbConnect();
+
     try {
         const { stack, user, prompt, topic } = job.data;
-
-        const aiPrompt = bots[stack].prompt;
-        const openai = new OpenAIApi(configuration);
+        const aiPrompt = bots[stack].prompt + (db.data.messageHistory[user.uid] || []).join("") + "EquiBot:";
         
         const completion = await openai.createChatCompletion({
             model: "gpt-3.5-turbo-16k",
             messages: [
                 { role: "assistant", content: topic },
-                { role: "user", content: aiPrompt + db.data.messageHistory[user.uid].join("") + "EquiBot:" },
+                { role: "user", content: aiPrompt },
             ],
             temperature: 0.7,
             max_tokens: 1024
         });
 
         const aiResponse = (completion.data.choices[0].message.content).trim();
-
-        const db = await dbConnect();
+        
+        db.data.messageHistory[user.uid] = db.data.messageHistory[user.uid] || [];
         db.data.messageHistory[user.uid].push(`${AI_NAME}: ${aiResponse}\n`);
 
         if (db.data.messageHistory[user.uid].length > MEMORY_SIZE) {
@@ -45,9 +50,10 @@ openaiQueue.process(async (job) => {
         }
 
         return aiResponse;
+        
     } catch (error) {
         console.error(`Failed to process job ${job.id}. ${error}`);
-        throw error;
+        await db.delete(); // or other error handling strategy
     }
 });
 
@@ -60,9 +66,10 @@ export default withNextSession(async (req, res) => {
         const prompt = body.prompt || "";
         const href = req.body.href;
 
-        const jsonDirectory = path.join(process.cwd(), 'json');
-        const stacksContent = await fs.readFile(jsonDirectory + '/data.json', 'utf8');
-        const stacks = JSON.parse(stacksContent);
+        const dataFilePath = path.join(process.cwd(), 'public', 'data.json');
+        const dataRaw = fs.readFileSync(dataFilePath, 'utf8');
+        const stacks = JSON.parse(dataRaw);        
+
         const { user } = req.session;
 
         if (!configuration.apiKey) {
@@ -100,6 +107,7 @@ export default withNextSession(async (req, res) => {
         });
 
         return res.status(202).json({ jobId: job.id });
+
     } else if (req.method === "PUT")  {
         const {uid} = req.query;
 
@@ -114,6 +122,7 @@ export default withNextSession(async (req, res) => {
         await req.session.save();
 
         return res.status(200).json(uid);
+
     } else if (req.method === "DELETE") {
         const { user } = req.session;
 
@@ -125,6 +134,7 @@ export default withNextSession(async (req, res) => {
         }
 
         return res.status(200).json({message: "Nothing to clear!"});
+
     } else {
         return res.status(500).json({error: {message: "Invalid API Route"}});
     }
