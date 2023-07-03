@@ -18,7 +18,7 @@ export default NextAuth({
         isRegistration: { label: "Is Registration", type: "hidden" }
       },
       async authorize(credentials) {
-        const uri = process.env.MONGODB_URL;
+        const uri = process.env.MONGODB_URI;
         const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
         
         try {

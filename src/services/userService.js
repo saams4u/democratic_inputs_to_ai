@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { MongoClient, ObjectId } from 'mongodb';
 
 async function connectDb() {
-  const uri = process.env.MONGODB_URL;
+  const uri = process.env.MONGODB_URI;
   const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
   await client.connect();
   return client.db();

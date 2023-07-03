@@ -1,6 +1,6 @@
 
 import stacks from "@/data/stacks.json";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { getSession } from "next-auth/react";
 
 import Header from '@/components/Header';
