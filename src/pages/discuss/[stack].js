@@ -11,6 +11,8 @@ export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false); 
     const chatRef = useRef(null);
+    
+    const baseUrl = "https://democratic-inputs-to-ai-3bv6-1kf531lwp-saams4u.vercel.app";
 
     const onSubmit = async(prompt) => {
         if (prompt.trim().length === 0 || isTyping) { 
@@ -29,7 +31,7 @@ export default function Stack({stack, stackKey}) {
             }
         ]);
 
-        const response = await fetch(`/api/completion?stack=${stackKey}`, {
+        const response = await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
             method: "POST",
             body: JSON.stringify({
                 href: window.location.href,
