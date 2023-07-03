@@ -1,6 +1,6 @@
 
 import { useRef, useState, useEffect } from "react";
-import { getSession } from "next-auth/react";
+import stacks from "@/data/stacks.json";
 
 import Header from '@/components/Header';
 import Message from '@/components/Message';
@@ -105,25 +105,20 @@ export default function Stack({stack, stackKey}) {
     )
 }
 
-export async function getServerSideProps(context) {
-    const session = await getSession(context);
-    
-    if (!session) {
-        context.res.writeHead(302, {
-            Location: '/login',
-        });
-        context.res.end();
-    }
-    
-    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
-
-    const res = await fetch(`${baseUrl}/data/stacks.json`);
-    const stacks = await res.json();
-
+export async function getStaticPaths() {
+    const paths = Object.keys(stacks).map((key) => ({params: {stack: key}}));
+  
     return {
-        props: {
-            stack: stacks[context.query.stack],
-            stackKey: context.query.stack
-        },
+      paths,
+      fallback: false
     }
-}
+  }
+  
+  export  async function getStaticProps({params}) {
+    return {
+      props: {
+        stack: stacks[params.stack],
+        stackKey: params.stack
+      }
+    }
+  }
