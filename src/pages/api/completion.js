@@ -5,7 +5,8 @@ import { dbConnect } from "@/lib/lowDb";
 import bots from "./bots.json";
 import { promises as fs } from 'fs';
 import path from 'path';
-import { Queue } from 'bull'; // Make sure to install 'bull' package.
+import { Queue } from 'bull';
+import runMiddleware, { cors } from '@/pages/api';
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
@@ -51,6 +52,8 @@ openaiQueue.process(async (job) => {
 });
 
 export default withNextSession(async (req, res) => {
+    await runMiddleware(req, res, cors);
+
     if (req.method === "POST") {
         const { stack } = req.query;
         const body = req.body;
