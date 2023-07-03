@@ -11,8 +11,8 @@ export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false); 
     const chatRef = useRef(null);
-    
-    const baseUrl = "https://democratic-inputs-to-ai-3bv6-1kf531lwp-saams4u.vercel.app";
+
+    const baseUrl = "https://democratic-inputs-to-ai.vercel.app";
 
     const onSubmit = async(prompt) => {
         if (prompt.trim().length === 0 || isTyping) { 
