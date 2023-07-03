@@ -15,10 +15,10 @@ export default function Stack({stack, stackKey}) {
 
     useEffect(() => {
         const cleanChatHistory = async () => {
-          await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/completion`, {method: "DELETE"});
+            await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/api/completion`);
         }
         cleanChatHistory();
-      }, []);
+    }, []);
     
     useEffect(() => {
         chatRef.current.scrollTo(0, chatRef.current.scrollHeight);
@@ -104,6 +104,7 @@ export default function Stack({stack, stackKey}) {
 
 Stack.getInitialProps = async (context) => {
     const session = await getSession(context);
+
     if (!session) {
         context.res.writeHead(302, {
             Location: '/login',
@@ -111,7 +112,7 @@ Stack.getInitialProps = async (context) => {
         context.res.end();
         return {};
     }
-    
+
     const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/data.json`);
     const stacks = res.data;
 

@@ -19,19 +19,18 @@ const MEMORY_SIZE = 6;
 export default withNextSession(async (req, res) => {
     await runMiddleware(req, res, cors);
     
+    const jsonDirectory = path.join(process.cwd(), 'public');        
+
+    const stacksContent = await fs.readFile(jsonDirectory + '/data.json', 'utf8');    
+    const botsContent = await fs.readFile(jsonDirectory + '/bots.json', 'utf8');
+
+    const bots = JSON.parse(botsContent);   
+    const stacks = JSON.parse(stacksContent);
+
     if (req.method === "POST") {
         const { stackKey } = req.query;
         const body = req.body;
         const prompt = body.prompt || "";
-
-        const jsonDirectory = path.join(process.cwd(), 'public');
-
-        const stacksContent = await fs.readFile(jsonDirectory + '/data.json', 'utf8');
-        const stacks = JSON.parse(stacksContent);
-        
-        const botsContent = await fs.readFile(jsonDirectory + '/bots.json', 'utf8');
-        const bots = JSON.parse(botsContent);            
-
         const { user } = req.session;
 
         if (!configuration.apiKey) {
