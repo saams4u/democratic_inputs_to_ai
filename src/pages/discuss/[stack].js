@@ -6,9 +6,14 @@ import Header from '@/components/Header';
 import Message from '@/components/Message';
 import Prompt from '@/components/Prompt';
 
+import useUser from "@/hooks/useUser";
+
 export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);
+    const [activeSession, setActiveSession] = useState("");
     const [isTyping, setIsTyping] = useState(false); 
+
+    const {user} = useUser();
     const chatRef = useRef(null);
 
     useEffect(() => {
@@ -17,7 +22,14 @@ export default function Stack({stack, stackKey}) {
         }
         cleanChatHistory();
     }, []);
-    
+
+    useEffect(() => {
+        if (user) {
+          setActiveSession(user.uid);
+          console.log(activeSession);
+        }
+    }, [user]);
+
     useEffect(() => {
         chatRef.current.scrollTo(0, chatRef.current.scrollHeight);
     }, [messages]);
@@ -63,7 +75,7 @@ export default function Stack({stack, stackKey}) {
             } else {
                 console.log('Response was not OK, or was empty.');
             }
-        
+
         } catch (error) {
             console.error(error);
             setIsTyping(false); 
