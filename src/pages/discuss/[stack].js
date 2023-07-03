@@ -12,10 +12,11 @@ export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false); 
     const chatRef = useRef(null);
+    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
 
     useEffect(() => {
         const cleanChatHistory = async () => {
-            await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/api/completion`);
+            await axios.delete(`${baseUrl}/api/completion`);
         }
         cleanChatHistory();
     }, []);
@@ -113,7 +114,7 @@ Stack.getInitialProps = async (context) => {
         return {};
     }
 
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/data.json`);
+    const res = await axios.get(`${baseUrl}/data.json`);
     const stacks = res.data;
 
     return {
