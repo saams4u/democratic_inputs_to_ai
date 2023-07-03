@@ -47,23 +47,27 @@ export default function Stack({stack, stackKey}) {
                     "Content-type": "application/json"
                 }
             });
-    
-            const json = response.json();
         
-            setMessages((messages) => [
-                ...messages,
-                {
-                    id: new Date().toISOString(),
-                    author: "ai",
-                    avatar: "/logos/openai.png",
-                    text: json.result
-                }
-            ]);
-            
+            if (response.ok && response.headers.get("content-length") !== "0") {
+                const json = await response.json();
+        
+                setMessages((messages) => [
+                    ...messages,
+                    {
+                        id: new Date().toISOString(),
+                        author: "ai",
+                        avatar: "/logos/openai.png",
+                        text: json.result
+                    }
+                ]);
+            } else {
+                console.log('Response was not OK, or was empty.');
+            }
+        
         } catch (error) {
             console.error(error);
             setIsTyping(false); 
-        }      
+        }
     }        
 
     return (
