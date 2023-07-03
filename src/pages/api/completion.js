@@ -6,7 +6,7 @@ import bots from "./bots.json";
 import { promises as fs } from 'fs';
 import path from 'path';
 import { Queue } from 'bull';
-import runMiddleware, { cors } from '@/pages/api';
+import runMiddleware, { cors } from '@/pages/api/middleware';
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
