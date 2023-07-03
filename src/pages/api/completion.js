@@ -1,5 +1,7 @@
 
 import { Configuration, OpenAIApi } from "openai";
+import { cors, runMiddleware } from './middleware';
+
 import { withNextSession } from "@/lib/session";
 import { dbConnect } from "@/lib/lowDb";
 
@@ -15,6 +17,7 @@ const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
 export default withNextSession(async (req, res) => {
+    await runMiddleware(req, res, cors);
     
     if (req.method === "POST") {
         const { stackKey } = req.query;
