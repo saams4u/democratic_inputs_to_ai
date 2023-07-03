@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 export default function useUser() {
     const [user, setUser] = useState(null);
-    const baseUrl = "https://democratic-inputs-to-ai.vercel.app";
+    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
 
     useEffect(() => {
         const getUser = async () => {

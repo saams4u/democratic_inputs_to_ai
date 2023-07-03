@@ -9,7 +9,7 @@ const nextConfig = {
         {
           source: '/api/:path*',
           headers: [
-            { key: 'Access-Control-Allow-Origin', value: 'https://democratic-inputs-to-ai.vercel.app' },
+            { key: 'Access-Control-Allow-Origin', value: 'https://democratic-inputs-to-ai-3bv6.vercel.app' },
           ],
         },
       ];
