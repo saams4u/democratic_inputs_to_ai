@@ -5,9 +5,6 @@ import { cors, runMiddleware } from "./middleware";
 import { withNextSession } from "@/lib/session";
 import { dbConnect } from "@/lib/lowDb";
 
-import fs from 'fs';
-import path from 'path';
-
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
 });
@@ -39,8 +36,8 @@ export default withNextSession(async (req, res) => {
             db.data.messageHistory[user.uid] ||= [];
             db.data.messageHistory[user.uid].push(`${USER_NAME}: ${prompt}\n`);
 
-            const botsFilePath = path.join(process.cwd(), 'public/data/bots.json');
-            const botsData = JSON.parse(fs.readFileSync(botsFilePath, 'utf8'));
+            const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
+            const botsData = `${baseUrl}/data/bots.json`;
 
             const aiPrompt = botsData[stack].prompt;
             const openai = new OpenAIApi(configuration);
