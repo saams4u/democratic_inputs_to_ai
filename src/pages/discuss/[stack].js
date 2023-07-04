@@ -5,8 +5,21 @@ import { getSession } from "next-auth/react";
 import Header from '@/components/Header';
 import Message from '@/components/Message';
 import Prompt from '@/components/Prompt';
+import useUser from '@/hooks/useUser';   // import the useUser hook
 
 export default function Stack({stack, stackKey}) {
+
+    const { user, status } = useUser();   // use the useUser hook
+    console.log(user);
+
+    if (status === 'loading') {
+        return <div>Loading...</div>;   // show a loading message
+    }
+
+    if (status === 'unauthenticated') {
+        return <div>You need to be logged in to view this page.</div>;
+    }
+
     const [messages, setMessages] = useState([]);
     const chatRef = useRef(null);
     const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
@@ -137,7 +150,7 @@ export async function getServerSideProps(context) {
   
       return {
         redirect: {
-          destination: '/error',
+          destination: `/error?message=${encodeURIComponent(error.message)}`,
           permanent: false,
         },
       };

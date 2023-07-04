@@ -5,5 +5,5 @@ export default function useUser() {
     const { data: session, status } = useSession();
     const user = status === 'loading' ? null : session?.user;
 
-    return { user };
+    return { user, status };
 }
