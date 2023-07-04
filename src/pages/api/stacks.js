@@ -6,7 +6,7 @@ import fs from 'fs';
 import path from 'path';
 
 export default withNextSession(async (req, res) => {
-    // await runMiddleware(req, res, cors);
+    await runMiddleware(req, res, cors);
 
     if (req.method === "GET") {
         const filePath = path.join(process.cwd(), 'public/data/stacks.json');
