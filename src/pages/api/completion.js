@@ -1,6 +1,6 @@
 
 import { Configuration, OpenAIApi } from "openai";
-import { cors, runMiddleware } from './middleware';
+import { cors, runMiddleware } from "./middleware";
 
 import { withNextSession } from "@/lib/session";
 import { dbConnect } from "@/lib/lowDb";

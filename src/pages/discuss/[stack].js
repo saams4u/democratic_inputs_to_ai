@@ -9,8 +9,6 @@ import useUser from "@/hooks/useUser";
 
 export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);
-    const [activeSession, setActiveSession] = useState("");
-    const {user} = useUser();
     const chatRef = useRef(null);
 
     useEffect(() => {
@@ -18,13 +16,7 @@ export default function Stack({stack, stackKey}) {
           await fetch("/api/completion", {method: "DELETE"});
         }
         cleanChatHistory();
-      }, []);
-      
-    useEffect(() => {
-        if (user) {
-          setActiveSession(user.uid);
-        }
-    }, [user]);
+    }, []);  
 
     const onSubmit = async (prompt) => {
         if (prompt.trim().length === 0) {
@@ -50,9 +42,10 @@ export default function Stack({stack, stackKey}) {
             "Content-type": "application/json"
             }
         });
-            
+
+        const json = await response.json();
+
         if (response.ok) {
-          const json = await response.json();
           setMessages((messages) => {
             return [
               ...messages,
@@ -126,14 +119,14 @@ export async function getServerSideProps(context) {
         const stacksData = await res.json();
         
         const stacks = stacksData.reduce((obj, stack) => {
-          obj[stack.key] = stack;
-          return obj;
+            obj[stack.key] = stack;
+            return obj;
         }, {});
 
         return {
             props: {
-            stack: stacks[context.params.stack],
-            stackKey: context.params.stack,
+                stack: stacks[context.params.stack],
+                stackKey: context.params.stack,
             },
         };
 

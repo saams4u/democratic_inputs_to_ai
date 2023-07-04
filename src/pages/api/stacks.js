@@ -1,9 +1,9 @@
 
+import { cors, runMiddleware } from "./middleware";
+import { withNextSession } from "@/lib/session";
+
 import fs from 'fs';
 import path from 'path';
-
-import { cors, runMiddleware } from './middleware';
-import { withNextSession } from "@/lib/session";
 
 export default withNextSession(async (req, res) => {
     await runMiddleware(req, res, cors);

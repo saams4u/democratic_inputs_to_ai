@@ -19,5 +19,4 @@ function runMiddleware(req, res, fn) {
   })
 }
 
-export default runMiddleware;
-export { cors }
+export { cors, runMiddleware }
