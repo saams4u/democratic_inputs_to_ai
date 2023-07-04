@@ -38,9 +38,26 @@ export default async function handler(req, res) {
             db.data.messageHistory[user.uid].push(`${USER_NAME}: ${prompt}\n`);
 
             const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
-            const botsData = `${baseUrl}/data/bots.json`;
+
+            const stacksResponse = await fetch(`${baseUrl}/data/stacks.json`);
+            if (!stacksResponse.ok) {
+                throw new Error(`Could not fetch stacks data: ${stacksResponse.statusText}`);
+            }
+            const stacksData = await stacksResponse.json();  
+
+            const botsResponse = await fetch(`${baseUrl}/data/bots.json`);
+            if (!botsResponse.ok) {
+                throw new Error(`Could not fetch bots data: ${botsResponse.statusText}`);
+            }
+            const botsData = await botsResponse.json();
 
             const aiPrompt = botsData[stack].prompt;
+            const topic = stacksData[stack].topic;
+
+            if (!topic) {
+                return res.status(400).json({ error: { message: "Invalid topicKey value" } });
+            }
+
             const openai = new OpenAIApi(configuration);
 
             const completion = await openai.createChatCompletion({
@@ -61,7 +78,6 @@ export default async function handler(req, res) {
             }
 
             await db.write();
-
             return res.status(200).json({result: aiResponse});
 
         } catch(e) {
