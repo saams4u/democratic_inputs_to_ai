@@ -93,57 +93,53 @@ export default function Stack({stack, stackKey}) {
 }
 
 export async function getServerSideProps(context) {
-    const session = await getSession({ req });
-        
+    const session = await getSession(context);
+    
     if (!session) {
-        return res.status(403).json({ error: { message: "No active session found!" } });
+      return {
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
+      };
     }
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
-        };
-    }
-
+  
     try {
-        const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
-        const res = await fetch(`${baseUrl}/data/stacks.json`);
-
-        if (!res.ok) {
-            console.error(`Error: HTTP ${res.status}`);
-            const text = await res.text();
-            console.error(`Response text: ${text}`);
-            throw new Error('Network response was not ok');
-        }
-
-        let stacks;
-        try {
-            stacks = await res.json();
-        } catch(e) {
-            console.error(`Error parsing JSON response: ${e}`);
-            const text = await res.text();
-            console.error(`Response text: ${text}`);
-            throw e;
-        }
-
-        return {
-            props: {
-                stack: stacks[context.params.stack],
-                stackKey: context.params.stack,
-            },
-        };
-
+      const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
+      const res = await fetch(`${baseUrl}/data/stacks.json`);
+  
+      if (!res.ok) {
+        console.error(`Error: HTTP ${res.status}`);
+        const text = await res.text();
+        console.error(`Response text: ${text}`);
+        throw new Error('Network response was not ok');
+      }
+  
+      let stacks;
+      try {
+        stacks = await res.json();
+      } catch(e) {
+        console.error(`Error parsing JSON response: ${e}`);
+        const text = await res.text();
+        console.error(`Response text: ${text}`);
+        throw e;
+      }
+  
+      return {
+        props: {
+          stack: stacks[context.params.stack],
+          stackKey: context.params.stack,
+        },
+      };
+      
     } catch (error) {
-        console.error(`Fetch Error: ${error}`);
-
-        return {
-            redirect: {
-                destination: '/error',
-                permanent: false,
-            },
-        };
+      console.error(`Fetch Error: ${error}`);
+  
+      return {
+        redirect: {
+          destination: '/error',
+          permanent: false,
+        },
+      };
     }
 }

@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         await runMiddleware(req, res, cors);
 
         const session = await getSession({ req });
-        
+
         if (!session) {
             return res.status(403).json({ error: { message: "No active session found!" } });
         }
@@ -49,7 +49,6 @@ export default async function handler(req, res) {
             }
 
             const stacksData = await stacksResponse.json();  
-
             const botsResponse = await fetch(`${baseUrl}/data/bots.json`);
 
             if (!botsResponse.ok) {

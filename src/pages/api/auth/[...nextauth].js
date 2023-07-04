@@ -32,11 +32,9 @@ export default NextAuth({
               if (user) {
                 return { id: user._id, name: user.username, email: user.email }
               } else {
-                // Return an error message instead of throwing an error
                 return { error: "Registration failed" }
               }
             } catch (e) {
-              // Return an error message instead of throwing an error
               return { error: e.message }
             }
           } else {
@@ -44,7 +42,6 @@ export default NextAuth({
             if (user && (await bcrypt.compare(credentials.password, user.password))) {
               return { id: user._id, name: user.username, email: user.email }
             } else {
-              // Return an error message instead of throwing an error
               return { error: "Invalid username or password" };
             }
           }
