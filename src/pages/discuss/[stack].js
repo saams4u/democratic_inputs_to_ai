@@ -1,65 +1,92 @@
 
-import { useRef, useState, useEffect } from "react";
-import { getSession } from "next-auth/react";
+import stacks from "@/data/stacks.json";
 
-import Header from '@/components/Header';
-import Message from '@/components/Message';
-import Prompt from '@/components/Prompt';
+import Header from "@/components/Header";
+import Message from "@/components/Message";
+import Prompt from "@/components/Prompt";
+
+import { useEffect, useRef, useState } from "react";
+import useUser from "@/hooks/useUser";
 
 export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);
+    const [activeSession, setActiveSession] = useState("");
+    const {user} = useUser();
     const chatRef = useRef(null);
-
+  
     useEffect(() => {
-        const cleanChatHistory = async () => {
-          await fetch("/api/completion", {method: "DELETE"});
-        }
-        cleanChatHistory();
-    }, []);  
-
+      const cleanChatHistory = async () => {
+        await fetch("/api/completion", {method: "DELETE"});
+      }
+  
+      cleanChatHistory();
+    }, []);
+  
+    useEffect(() => {
+      if (user) {
+        setActiveSession(user.uid);
+      }
+    }, [user]);
+  
+    useEffect(() => {
+      chatRef.current.scrollTo(0, chatRef.current.scrollHeight);
+    }, [messages]);
+  
     const onSubmit = async (prompt) => {
-        if (prompt.trim().length === 0) {
-          return;
+      if (prompt.trim().length === 0) {
+        return;
+      }
+  
+      setMessages((messages) => {
+        return [
+          ...messages,
+          {
+            id: new Date().toISOString(),
+            author: "human",
+            avatar: "https://thrangra.sirv.com/Avatar2.png",
+            text: prompt
+          }
+        ]
+      });
+  
+      const response = await fetch(`/api/completion?stack=${stackKey}`, {
+        method: "POST",
+        body: JSON.stringify({prompt}),
+        headers: {
+          "Content-type": "application/json"
         }
-    
+      });
+  
+      const json = await response.json();
+      
+      if (response.ok) {
         setMessages((messages) => {
           return [
             ...messages,
             {
               id: new Date().toISOString(),
-              author: "human",
-              avatar: "https://thrangra.sirv.com/Avatar2.png",
-              text: prompt
+              author: "ai",
+              avatar: "/logo-open-ai.png",
+              text: json.result
             }
           ]
         });
-    
-        const response = await fetch(`/api/completion?stack=${stackKey}`, {
-            method: "POST",
-            body: JSON.stringify({prompt}),
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
-
-        const json = await response.json();
-
-        if (response.ok) {
-          setMessages((messages) => {
-            return [
-              ...messages,
-              {
-                id: new Date().toISOString(),
-                author: "ai",
-                avatar: "/logo-open-ai.png",
-                text: json.result
-              }
-            ]
-          });
-        } else {
-          console.error(json?.error?.message);
-        }
-    }        
+      } else {
+        console.error(json?.error?.message);
+      }
+    } 
+  
+    const handleSessionChange = async (e) => {
+      const session = e.target.value;
+  
+      if (!session) {
+        console.log("Not valid session!");
+        return;
+      }
+  
+      await fetch(`/api/completion?uid=${session}`, {method: "PUT"})
+      setActiveSession(session);
+    }  
 
     return (
         <div className="h-full flex flex-col">
@@ -96,43 +123,20 @@ export default function Stack({stack, stackKey}) {
     )
 }
 
-export async function getServerSideProps(context) {
-    const session = await getSession(context);
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: '/login',
-                permanent: false,
-            },
-        };
+export async function getStaticPaths() {
+    const paths = Object.keys(stacks).map((key) => ({params: {stack: key}}));
+  
+    return {
+      paths,
+      fallback: false
     }
-
-    try {
-        const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
-        const res = await fetch(`${baseUrl}/data/stacks.json`);
-        
-        if (!res.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const stacks = await res.json();
-
-        return {
-            props: {
-                stack: stacks[context.params.stack],
-                stackKey: context.params.stack,
-            },
-        };
-
-    } catch (error) {
-        console.error(`Fetch Error: ${error}`);
-        
-        return {
-            redirect: {
-                destination: '/error',
-                permanent: false,
-            },
-        };
-    }    
-}
+  }
+  
+  export  async function getStaticProps({params}) {
+    return {
+      props: {
+        stack: stacks[params.stack],
+        stackKey: params.stack
+      }
+    }
+  }
