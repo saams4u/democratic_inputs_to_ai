@@ -10,30 +10,28 @@ export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);
     const chatRef = useRef(null);
 
-    useEffect(() => {
+    /* useEffect(() => {
         const cleanChatHistory = async () => {
           await fetch("/api/completion", {method: "DELETE"});
         }
         cleanChatHistory();
-    }, []);  
+    }, []);  */  // Consider when you want to clear the chat history
 
     const onSubmit = async (prompt) => {
         if (prompt.trim().length === 0) {
           return;
         }
     
-        setMessages((messages) => {
-          return [
-            ...messages,
-            {
-              id: new Date().toISOString(),
-              author: "human",
-              avatar: "https://thrangra.sirv.com/Avatar2.png",
-              text: prompt
-            }
-          ]
-        });
-    
+        setMessages((messages) => [
+          ...messages,
+          {
+            id: new Date().toISOString(),
+            author: "human",
+            avatar: "https://thrangra.sirv.com/Avatar2.png",
+            text: prompt
+          }
+        ]);
+
         const response = await fetch(`/api/completion?stack=${stackKey}`, {
             method: "POST",
             body: JSON.stringify({prompt}),
@@ -42,24 +40,21 @@ export default function Stack({stack, stackKey}) {
             }
         });
 
-        const json = await response.json();
-
         if (response.ok) {
-          setMessages((messages) => {
-            return [
-              ...messages,
-              {
-                id: new Date().toISOString(),
-                author: "ai",
-                avatar: "/logo-open-ai.png",
-                text: json.result
-              }
-            ]
-          });
+          const json = await response.json();
+          setMessages((messages) => [
+            ...messages,
+            {
+              id: new Date().toISOString(),
+              author: "ai",
+              avatar: "/logo-open-ai.png",
+              text: json.result
+            }
+          ]);
         } else {
-          console.error(json?.error?.message);
+          console.error("Response not OK"); // Modify this line to handle errors as you see fit
         }
-    }        
+    }           
 
     return (
         <div className="h-full flex flex-col">
@@ -111,12 +106,23 @@ export async function getServerSideProps(context) {
     try {
         const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
         const res = await fetch(`${baseUrl}/data/stacks.json`);
-        
+
         if (!res.ok) {
+            console.error(`Error: HTTP ${res.status}`);
+            const text = await res.text();
+            console.error(`Response text: ${text}`);
             throw new Error('Network response was not ok');
         }
 
-        const stacks = await res.json();
+        let stacks;
+        try {
+            stacks = await res.json();
+        } catch(e) {
+            console.error(`Error parsing JSON response: ${e}`);
+            const text = await res.text();
+            console.error(`Response text: ${text}`);
+            throw e;
+        }
 
         return {
             props: {
@@ -127,12 +133,12 @@ export async function getServerSideProps(context) {
 
     } catch (error) {
         console.error(`Fetch Error: ${error}`);
-        
+
         return {
             redirect: {
                 destination: '/error',
                 permanent: false,
             },
         };
-    }    
+    }
 }

@@ -1,7 +1,6 @@
 
+import { getSession } from "next-auth/react";
 import { Configuration, OpenAIApi } from "openai";
-import { withNextSession } from "@/lib/session";
-
 import { cors, runMiddleware } from "./middleware";
 import { dbConnect } from "@/lib/lowDb";
 
@@ -13,8 +12,10 @@ const USER_NAME = "Human";
 const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
-export default withNextSession(async (req, res) => {
+export default async function handler(req, res) {
     // await runMiddleware(req, res, cors);
+
+    const session = await getSession({ req });
 
     if (req.method === "POST") {
         const { stack } = req.query;
@@ -32,8 +33,7 @@ export default withNextSession(async (req, res) => {
 
         try {
             const db = await dbConnect();
-
-            db.data.messageHistory[user.uid] ||= [];
+            db.data.messageHistory[user.uid] = db.data.messageHistory[user.uid] || [];
             db.data.messageHistory[user.uid].push(`${USER_NAME}: ${prompt}\n`);
 
             const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
@@ -101,7 +101,7 @@ export default withNextSession(async (req, res) => {
     } else if (req.method === "DELETE") {
         const { user } = req.session;
 
-        if (user) {
+        if (user && db.data.messageHistory[user.uid]) {
             const db = await dbConnect();
             db.data.messageHistory[user.uid] = [];
 
@@ -114,4 +114,4 @@ export default withNextSession(async (req, res) => {
     } else {
         return res.status(500).json({error: {message: "Invalid API Route"}});
     }
-})
+}
