@@ -10,17 +10,8 @@ import useUser from '@/hooks/useUser';   // import the useUser hook
 export default function Stack({stack, stackKey}) {
 
     const { user, status } = useUser();   // use the useUser hook
-    console.log(user);
-
-    if (status === 'loading') {
-        return <div>Loading...</div>;   // show a loading message
-    }
-
-    if (status === 'unauthenticated') {
-        return <div>You need to be logged in to view this page.</div>;
-    }
-
     const [messages, setMessages] = useState([]);
+
     const chatRef = useRef(null);
     const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
 
@@ -30,6 +21,16 @@ export default function Stack({stack, stackKey}) {
         }
         cleanChatHistory();
     }, []);  */  // Consider when you want to clear the chat history
+
+    console.log(user);
+
+    if (status === 'loading') {
+        return <div>Loading...</div>;   // show a loading message
+    }
+
+    if (status === 'unauthenticated') {
+        return <div>You need to be logged in to view this page.</div>;
+    }
 
     const onSubmit = async (prompt) => {
         if (prompt.trim().length === 0) {

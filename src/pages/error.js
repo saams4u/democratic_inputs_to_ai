@@ -10,7 +10,7 @@ export default function Error() {
             <h1 className="error-title">Oops!</h1>
             {message ? (
                 <p className="error-description">
-                  Something went wrong. Here's what we know: <br />
+                  Something went wrong. Here&apos;s what we know: <br />
                   <span className="error-detail">{decodeURIComponent(message)}</span>
                 </p>
             ) : (
