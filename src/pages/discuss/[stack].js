@@ -5,7 +5,6 @@ import { getSession } from "next-auth/react";
 import Header from '@/components/Header';
 import Message from '@/components/Message';
 import Prompt from '@/components/Prompt';
-import useUser from "@/hooks/useUser";
 
 export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);

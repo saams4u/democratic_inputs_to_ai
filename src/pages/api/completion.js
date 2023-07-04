@@ -17,7 +17,7 @@ const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
 export default withNextSession(async (req, res) => {
-    await runMiddleware(req, res, cors);
+    // await runMiddleware(req, res, cors);
     
     if (req.method === "POST") {
         const { stack } = req.query;
