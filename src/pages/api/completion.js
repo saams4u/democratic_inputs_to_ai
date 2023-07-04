@@ -13,11 +13,11 @@ const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
 export default async function handler(req, res) {
-    // await runMiddleware(req, res, cors);
+    if (req.method === "POST") {
 
-    const session = await getSession({ req });
+        await runMiddleware(req, res, cors);
+        const session = await getSession({ req });
 
-    if (req.method === "POST" || req.method === "GET") {
         const { stack } = req.query;
         const body = req.body;
         const prompt = body.prompt || "";
