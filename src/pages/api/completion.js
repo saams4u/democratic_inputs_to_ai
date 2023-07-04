@@ -1,8 +1,7 @@
 
+import { getSession } from "next-auth/react";
 import { Configuration, OpenAIApi } from "openai";
 import { cors, runMiddleware } from "./middleware";
-
-import { withNextSession } from "@/lib/session";
 import { dbConnect } from "@/lib/lowDb";
 
 const configuration = new Configuration({
@@ -13,14 +12,16 @@ const USER_NAME = "Human";
 const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
-export default withNextSession(async (req, res) => {
+export default async function handler(req, res) {
     await runMiddleware(req, res, cors);
-    
+
+    const session = await getSession({ req });
+
     if (req.method === "POST") {
         const { stack } = req.query;
         const body = req.body;
         const prompt = body.prompt || "";
-        const { user } = req.session;
+        const { user } = session;
 
         if (!configuration.apiKey) {
             return res.status(500).json({error: {message: "OpenAI API Key is missing!"}});
@@ -49,7 +50,7 @@ export default withNextSession(async (req, res) => {
                     { role: "user", content: aiPrompt + db.data.messageHistory[user.uid].join("") + "EquiBot:" },
                 ],
                 temperature: 0.7,
-                max_tokens: 1024
+                max_tokens: 50
             });
 
             const aiResponse = (completion.data.choices[0].message.content).trim();
@@ -60,7 +61,9 @@ export default withNextSession(async (req, res) => {
             }
 
             await db.write();
+
             return res.status(200).json({result: aiResponse});
+
         } catch(e) {
             console.log(e.message);
             return res.status(500).json({error: {message: e.message}});
@@ -80,7 +83,7 @@ export default withNextSession(async (req, res) => {
         await req.session.save();
 
         return res.status(200).json(uid);
-        
+
     } else if (req.method === "DELETE") {
         const { user } = req.session;
 
@@ -97,4 +100,4 @@ export default withNextSession(async (req, res) => {
     } else {
         return res.status(500).json({error: {message: "Invalid API Route"}});
     }
-})
+}

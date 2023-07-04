@@ -1,11 +1,12 @@
 
-import { withNextSession } from "@/lib/session";
+import { getSession } from "next-auth/react";
 
-export default withNextSession(userRoute);
+export default async function userRoute(req, res) {
 
-function userRoute(req, res) {
-    if (req.session.user) {
-        return res.status(200).json(req.session.user);
+    const session = await getSession({ req });
+
+    if (session) {
+        return res.status(200).json(session.user);
     } else {
         return res.status(200).json(null);
     }

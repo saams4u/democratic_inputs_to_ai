@@ -1,18 +1,9 @@
 
-import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 export default function useUser() {
-  const [user, setUser] = useState(null);
+    const { data: session, status } = useSession();
+    const user = status === 'loading' ? null : session?.user;
 
-  useEffect(() => {
-    const getUser = async () => {
-      const res = await fetch("/api/user");
-      const data = await res.json();
-      setUser(data);
-    }
-
-    getUser();
-  }, []);
-
-  return {user}
+    return { user };
 }
