@@ -29,15 +29,9 @@ export async function registerUser({ email, password, username }) {
     throw new Error('Failed to register user');
   }
 
-  const user = await db.collection('users').findOne({ _id: new ObjectId(result.insertedId) });
-
-  if (!user) {
-    throw new Error('Failed to register user');
-  }
-
   return { 
-      _id: user._id, 
-      email: user.email, 
-      username: user.username, 
+      _id: result.insertedId.toString(), 
+      email, 
+      username
   }
 }

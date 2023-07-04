@@ -15,7 +15,12 @@ const MEMORY_SIZE = 6;
 export default async function handler(req, res) {
     if (req.method === "POST") {
         await runMiddleware(req, res, cors);
+
         const session = await getSession({ req });
+        
+        if (!session) {
+            return res.status(403).json({ error: { message: "No active session found!" } });
+        }
 
         const { stack } = req.query;
         const body = req.body;
@@ -32,7 +37,7 @@ export default async function handler(req, res) {
 
         try {
             const db = await dbConnect();
-            
+
             db.data.messageHistory[user.uid] = db.data.messageHistory[user.uid] || [];
             db.data.messageHistory[user.uid].push(`${USER_NAME}: ${prompt}\n`);
 

@@ -25,30 +25,33 @@ export default NextAuth({
           await client.connect();
           const db = client.db();
           const users = db.collection('users');
-
+      
           if(credentials.isRegistration === 'true') {
             try {
               const user = await registerUser(credentials);
               if (user) {
                 return { id: user._id, name: user.username, email: user.email }
               } else {
-                throw new Error("Registration failed")
+                // Return an error message instead of throwing an error
+                return { error: "Registration failed" }
               }
             } catch (e) {
-              throw new Error(e.message)
+              // Return an error message instead of throwing an error
+              return { error: e.message }
             }
           } else {
             const user = await users.findOne({ username: credentials.username });
             if (user && (await bcrypt.compare(credentials.password, user.password))) {
               return { id: user._id, name: user.username, email: user.email }
             } else {
-              return null;
+              // Return an error message instead of throwing an error
+              return { error: "Invalid username or password" };
             }
           }
         } finally {
           await client.close();
         }
-      }
+      }      
     })
   ],
   pages: {
@@ -69,14 +72,13 @@ export default NextAuth({
       return session;
     },
     async signIn(user, account, profile) {
-      console.log(user);
-      if (account && account.type === 'credentials') { // Check if account exists before accessing its properties
+      if (account && account.type === 'credentials') {
         if (profile.error || !user) {
           console.log("Authentication failed.");
-          return Promise.reject(new Error('Authentication failed'));
+          return Promise.reject(profile.error || 'Authentication failed');
         }
       }
       return true;
-    }    
+    }     
   }  
 })

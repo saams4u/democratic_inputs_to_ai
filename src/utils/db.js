@@ -2,23 +2,23 @@
 import bcrypt from 'bcryptjs';
 import { MongoClient, ObjectId } from 'mongodb';
 
-let db;
+let client;
 
 async function connectDb() {
-  if (db) {
-    return db;
+  if (client && client.isConnected()) {
+    return client.db();
   }
   
   const uri = process.env.MONGODB_URI;
-  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
   try {    
     await client.connect();
     console.log("Successfully connected to MongoDB");
-    db = client.db(); // Assign the database instance to the global `db` variable
-    return db;
+    return client.db();
   } catch (error) {
     console.error('Error occurred while connecting to MongoDB', error);
+    client = null; // Reset client on error
   }
 }
 
@@ -27,10 +27,17 @@ async function createUser({ username, password, email }) {
     throw new Error('All fields are required');
   }
 
-  const db = await connectDb();
-  
+  const db = await connectDb();  
   const salt = await bcrypt.genSalt(12);
-  const hashedPassword = await bcrypt.hash(password, salt);
+
+  let hashedPassword;
+
+  try {
+    hashedPassword = await bcrypt.hash(password, salt);
+  } catch (error) {
+    console.error('Error occurred while hashing password', error);
+    throw new Error('Failed to create user');
+  }
 
   try {
     const result = await db.collection('users').insertOne({
@@ -38,7 +45,6 @@ async function createUser({ username, password, email }) {
       password: hashedPassword,
       email,
     });
-
     return { id: result.insertedId, username, email };
   } catch (error) {
     if (error.code === 11000) {
@@ -50,27 +56,29 @@ async function createUser({ username, password, email }) {
 
 async function findUser(filter) {
   const db = await connectDb();
-
   const user = await db.collection('users').findOne(filter);
 
   if (user) {
     return { id: user._id, username: user.username, email: user.email };
   }
   
-  return null;
+  return {};  
 }
 
 async function createIndexes() {
   const db = await connectDb();
-
-  await db.collection('users').createIndex({ username: 1 }, { unique: true });
-  await db.collection('users').createIndex({ email: 1 }, { unique: true });
+  try {
+    await db.collection('users').createIndex({ username: 1 }, { unique: true });
+    await db.collection('users').createIndex({ email: 1 }, { unique: true });
+  } catch (error) {
+    console.error('Error occurred while creating indexes', error);
+  }
 }
 
 async function disconnectDb() {
-  if (db) {
-    await db.close();
-    db = null;
+  if (client) {
+    await client.close();
+    client = null;
   }
 }
 
