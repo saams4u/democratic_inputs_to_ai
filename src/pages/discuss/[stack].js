@@ -9,6 +9,7 @@ import Prompt from '@/components/Prompt';
 export default function Stack({stack, stackKey}) {
     const [messages, setMessages] = useState([]);
     const chatRef = useRef(null);
+    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
 
     /* useEffect(() => {
         const cleanChatHistory = async () => {
@@ -32,7 +33,7 @@ export default function Stack({stack, stackKey}) {
           }
         ]);
 
-        const response = await fetch(`/api/completion?stack=${stackKey}`, {
+        const response = await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
             method: "POST",
             body: JSON.stringify({prompt}),
             headers: {

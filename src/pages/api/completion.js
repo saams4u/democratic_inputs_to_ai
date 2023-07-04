@@ -14,7 +14,6 @@ const MEMORY_SIZE = 6;
 
 export default async function handler(req, res) {
     if (req.method === "POST") {
-
         await runMiddleware(req, res, cors);
         const session = await getSession({ req });
 
@@ -33,21 +32,25 @@ export default async function handler(req, res) {
 
         try {
             const db = await dbConnect();
+            
             db.data.messageHistory[user.uid] = db.data.messageHistory[user.uid] || [];
             db.data.messageHistory[user.uid].push(`${USER_NAME}: ${prompt}\n`);
 
             const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
-
             const stacksResponse = await fetch(`${baseUrl}/data/stacks.json`);
+
             if (!stacksResponse.ok) {
                 throw new Error(`Could not fetch stacks data: ${stacksResponse.statusText}`);
             }
+
             const stacksData = await stacksResponse.json();  
 
             const botsResponse = await fetch(`${baseUrl}/data/bots.json`);
+
             if (!botsResponse.ok) {
                 throw new Error(`Could not fetch bots data: ${botsResponse.statusText}`);
             }
+
             const botsData = await botsResponse.json();
 
             const aiPrompt = botsData[stack].prompt;
