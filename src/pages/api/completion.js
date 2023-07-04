@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
     const session = await getSession({ req });
 
-    if (req.method === "POST") {
+    if (req.method === "POST" || req.method === "GET") {
         const { stack } = req.query;
         const body = req.body;
         const prompt = body.prompt || "";
