@@ -132,5 +132,12 @@ export async function getServerSideProps(context) {
 
     } catch (error) {
         console.error(`Fetch Error: ${error}`);
+        
+        return {
+            redirect: {
+                destination: '/error',
+                permanent: false,
+            },
+        };
     }    
 }
