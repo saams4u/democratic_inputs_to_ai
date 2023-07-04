@@ -78,7 +78,9 @@ export default withNextSession(async (req, res) => {
         };
 
         await req.session.save();
+
         return res.status(200).json(uid);
+        
     } else if (req.method === "DELETE") {
         const { user } = req.session;
 
