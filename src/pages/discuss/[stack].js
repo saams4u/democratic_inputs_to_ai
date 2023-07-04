@@ -116,12 +116,7 @@ export async function getServerSideProps(context) {
             throw new Error('Network response was not ok');
         }
 
-        const stacksData = await res.json();
-        
-        const stacks = stacksData.reduce((obj, stack) => {
-            obj[stack.key] = stack;
-            return obj;
-        }, {});
+        const stacks = await res.json();
 
         return {
             props: {
