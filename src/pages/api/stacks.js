@@ -10,7 +10,7 @@ export default withNextSession(async (req, res) => {
 
     if (req.method === "GET") {
         const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
-        const filePath = path.join(process.cwd(), `${baseUrl}/data/stacks.json`);
+        const filePath = `${baseUrl}/data/stacks.json`;
 
         if (!fs.existsSync(filePath)) {
             res.status(404).json({ message: 'File not found' });
