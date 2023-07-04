@@ -49,16 +49,15 @@ export default function Stack({stack, stackKey}) {
         });
     
         const response = await fetch(`/api/completion?stack=${stackKey}`, {
-          method: "POST",
-          body: JSON.stringify({prompt}),
-          headers: {
+            method: "POST",
+            body: JSON.stringify({prompt}),
+            headers: {
             "Content-type": "application/json"
-          }
+            }
         });
-    
-        const json = await response.json();
-        
+            
         if (response.ok) {
+          const json = await response.json();
           setMessages((messages) => {
             return [
               ...messages,
