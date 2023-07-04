@@ -9,7 +9,8 @@ export default withNextSession(async (req, res) => {
     await runMiddleware(req, res, cors);
 
     if (req.method === "GET") {
-        const filePath = path.join(process.cwd(), 'public/data/stacks.json');
+        const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
+        const filePath = path.join(process.cwd(), `${baseUrl}/data/stacks.json`);
 
         if (!fs.existsSync(filePath)) {
             res.status(404).json({ message: 'File not found' });

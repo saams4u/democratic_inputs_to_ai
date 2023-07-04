@@ -109,7 +109,8 @@ export async function getServerSideProps(context) {
     }
 
     try {
-        const res = await fetch('/api/stacks', {method: "GET"});
+        const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
+        const res = await fetch(`${baseUrl}/api/stacks`, {method: "GET"});
         
         if (!res.ok) {
             throw new Error('Network response was not ok');
