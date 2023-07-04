@@ -14,7 +14,7 @@ const nextConfig = {
           },
           { 
             key: 'Access-Control-Allow-Origin', 
-            value: 'https://democratic-inputs-to-ai-3bv6.vercel.app' 
+            value: '*' 
           },
           { 
             key: 'Access-Control-Allow-Methods', 

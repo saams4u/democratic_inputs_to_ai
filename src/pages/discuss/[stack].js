@@ -1,6 +1,4 @@
 
-import stacks from "@/data/stacks.json";
-
 import { useRef, useState, useEffect } from "react";
 import { getSession } from "next-auth/react";
 
@@ -40,7 +38,7 @@ export default function Stack({stack, stackKey}) {
             method: "POST",
             body: JSON.stringify({prompt}),
             headers: {
-                "Content-type": "application/json"
+                "Content-Type": "application/json"
             }
         });
 
@@ -98,20 +96,43 @@ export default function Stack({stack, stackKey}) {
     )
 }
 
-export async function getStaticPaths() {
-    const paths = Object.keys(stacks).map((key) => ({params: {stack: key}}));
-  
-    return {
-      paths,
-      fallback: false
+export async function getServerSideProps(context) {
+    const session = await getSession(context);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        };
     }
-  }
-  
-  export  async function getStaticProps({params}) {
-    return {
-      props: {
-        stack: stacks[params.stack],
-        stackKey: params.stack
-      }
-    }
-  }
+
+    try {
+        const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
+        const res = await fetch(`${baseUrl}/data/stacks.json`);
+        
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const stacks = await res.json();
+
+        return {
+            props: {
+                stack: stacks[context.params.stack],
+                stackKey: context.params.stack,
+            },
+        };
+
+    } catch (error) {
+        console.error(`Fetch Error: ${error}`);
+        
+        return {
+            redirect: {
+                destination: '/error',
+                permanent: false,
+            },
+        };
+    }    
+}
