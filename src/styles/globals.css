@@ -32,6 +32,24 @@ html, body, #__next {
   -webkit-border-radius: 1ex;
 }
 
-.shadow-custom {
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+.error-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+.error-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.error-description {
+    font-size: 1.25rem;
+    text-align: center;
+    max-width: 80%;
 }

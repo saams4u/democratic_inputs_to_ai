@@ -4,7 +4,9 @@ import { cors, runMiddleware } from './middleware';
 
 import { withNextSession } from "@/lib/session";
 import { dbConnect } from "@/lib/lowDb";
-import bots from "./bots.json";
+
+import fs from 'fs';
+import path from 'path';
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
@@ -37,7 +39,10 @@ export default withNextSession(async (req, res) => {
             db.data.messageHistory[user.uid] ||= [];
             db.data.messageHistory[user.uid].push(`${USER_NAME}: ${prompt}\n`);
 
-            const aiPrompt = bots[stack].prompt;
+            const botsFilePath = path.join(process.cwd(), 'public/data/bots.json');
+            const botsData = JSON.parse(fs.readFileSync(botsFilePath, 'utf8'));
+
+            const aiPrompt = botsData[stack].prompt;
             const openai = new OpenAIApi(configuration);
 
             const completion = await openai.createChatCompletion({

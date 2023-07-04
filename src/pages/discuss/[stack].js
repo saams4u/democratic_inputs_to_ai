@@ -2,7 +2,6 @@
 import { useRef, useState, useEffect } from "react";
 import { getSession } from "next-auth/react";
 
-import stacks from "@/data/stacks.json";
 import Header from '@/components/Header';
 import Message from '@/components/Message';
 import Prompt from '@/components/Prompt';
@@ -16,20 +15,16 @@ export default function Stack({stack, stackKey}) {
 
     useEffect(() => {
         const cleanChatHistory = async () => {
-            await fetch("/api/completion", {method: "DELETE"});
+          await fetch("/api/completion", {method: "DELETE"});
         }
         cleanChatHistory();
-    }, []);
-
+      }, []);
+      
     useEffect(() => {
         if (user) {
           setActiveSession(user.uid);
         }
     }, [user]);
-
-    useEffect(() => {
-        chatRef.current.scrollTo(0, chatRef.current.scrollHeight);
-    }, [messages]);
 
     const onSubmit = async (prompt) => {
         if (prompt.trim().length === 0) {
@@ -94,6 +89,11 @@ export default function Stack({stack, stackKey}) {
                         text={message.text}  
                     />
                 )}
+                  <div ref={el => {
+                    if (el) {
+                      el.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }} />
             </div>
             <div className="flex p-4">
                 <Prompt 
@@ -105,19 +105,46 @@ export default function Stack({stack, stackKey}) {
 }
 
 export async function getServerSideProps(context) {
-    const session = await getSession(context)
+    const session = await getSession(context);
+
     if (!session) {
         return {
             redirect: {
                 destination: '/login',
                 permanent: false,
             },
-        }
+        };
     }
-    return {
-        props: {
+
+    try {
+        const res = await fetch('/api/stacks');
+        
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const stacksData = await res.json();
+        
+        const stacks = stacksData.reduce((obj, stack) => {
+          obj[stack.key] = stack;
+          return obj;
+        }, {});
+
+        return {
+            props: {
             stack: stacks[context.params.stack],
-            stackKey: context.params.stack
-        }
-    }
+            stackKey: context.params.stack,
+            },
+        };
+
+    } catch (error) {
+        console.error(`Fetch Error: ${error}`);
+        
+        return {
+            redirect: {
+                destination: '/error',
+                permanent: false,
+            },
+        };
+    }    
 }
