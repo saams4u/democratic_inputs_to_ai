@@ -38,7 +38,7 @@ export default function Stack({stack, stackKey}) {
             method: "POST",
             body: JSON.stringify({prompt}),
             headers: {
-            "Content-type": "application/json"
+                "Content-type": "application/json"
             }
         });
 

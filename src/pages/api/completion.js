@@ -13,7 +13,7 @@ const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
 export default async function handler(req, res) {
-    await runMiddleware(req, res, cors);
+    // await runMiddleware(req, res, cors);
 
     const session = await getSession({ req });
 
@@ -97,7 +97,6 @@ export default async function handler(req, res) {
         };
 
         await req.session.save();
-
         return res.status(200).json(uid);
 
     } else if (req.method === "DELETE") {
