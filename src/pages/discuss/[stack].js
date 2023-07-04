@@ -117,7 +117,7 @@ export async function getServerSideProps(context) {
     }
 
     try {
-        const res = await fetch('/api/stacks');
+        const res = await fetch('/api/stacks', {method: "GET"});
         
         if (!res.ok) {
             throw new Error('Network response was not ok');
