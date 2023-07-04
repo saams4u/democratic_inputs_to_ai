@@ -1,6 +1,7 @@
 
-import { getSession } from "next-auth/react";
 import { Configuration, OpenAIApi } from "openai";
+import { withNextSession } from "@/lib/session";
+
 import { cors, runMiddleware } from "./middleware";
 import { dbConnect } from "@/lib/lowDb";
 
@@ -12,10 +13,8 @@ const USER_NAME = "Human";
 const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
-export default async function handler(req, res) {
+export default withNextSession(async (req, res) => {
     // await runMiddleware(req, res, cors);
-
-    const session = await getSession({ req });
 
     if (req.method === "POST") {
         const { stack } = req.query;
@@ -115,4 +114,4 @@ export default async function handler(req, res) {
     } else {
         return res.status(500).json({error: {message: "Invalid API Route"}});
     }
-}
+})
