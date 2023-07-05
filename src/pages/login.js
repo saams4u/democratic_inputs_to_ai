@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { useState } from "react";
 import { useRouter } from "next/router";
 
-import { applySession } from 'next-iron-session';
-import { withIronSession } from 'next-iron-session';
+import { withIronSession, applySession } from 'next-iron-session';
 
 function Login({ user }) {
   const [username, setUsername] = useState("");

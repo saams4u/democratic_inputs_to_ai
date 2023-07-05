@@ -4,7 +4,8 @@ import useUser from "@/hooks/useUser";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { applySession } from "next-iron-session";
+
+import { withIronSession, applySession } from 'next-iron-session';
 
 export default function Register() {
   const [username, setUsername] = useState("");
