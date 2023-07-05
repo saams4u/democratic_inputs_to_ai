@@ -20,12 +20,12 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     if (!username || !password) {
       setErrorEmpty("All fields are required.");
       return;
     } 
-
+  
     try {
         const response = await fetch('/api/login', {
           method: 'POST',
@@ -34,9 +34,13 @@ export default function Login() {
           },
           body: JSON.stringify({ username, password }),
         });
-
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
         const data = await response.json();
-
+  
         if (data.error) {
           setErrorLogin(data.error);
         } else {
@@ -47,7 +51,7 @@ export default function Login() {
         setErrorLogin(error.message);
     }
   };
-
+  
   return (
     <div className="h-full flex items-center justify-center bg-gradient-to-r from-green-400 via-blue-500 to-purple-500">
       <div className="w-full max-w-md p-8 m-4 bg-white rounded-xl shadow-lg">
