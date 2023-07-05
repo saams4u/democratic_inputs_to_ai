@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         return res.status(403).json({ error: { message: "No active session found!" } });
     }
 
-    const { user } = session;
+    const { user } = session.user;
 
     if (!user) {
         return res.status(500).json({error: {message: "Session is missing!"}});
