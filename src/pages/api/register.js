@@ -7,9 +7,10 @@ export default withIronSession(
     if (req.method === 'POST') {
       try {
         await registerUser(req.body);
-        const { username, password } = req.body;
 
+        const { username, password } = req.body;
         const loggedUser = await loginUser({ username, password });
+        
         if (!loggedUser) {
           res.status(401).json({ error: 'Login failed' });
           return;
@@ -26,10 +27,10 @@ export default withIronSession(
     }
   },
   {
-    cookieName: "user-session", // specify your cookie name
+    cookieName: "user-session",
     cookieOptions: {
       secure: process.env.NODE_ENV === "production" ? true : false,
     },
-    password: process.env.SECRET_COOKIE_PASSWORD, // specify your secret password
+    password: process.env.SECRET_COOKIE_PASSWORD,
   }
 );

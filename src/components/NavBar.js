@@ -1,6 +1,5 @@
 
 import Link from "next/link";
-
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 
@@ -9,17 +8,15 @@ export default function NavBar() {
     const router = useRouter();
 
     useEffect(() => {
-        const user = localStorage.getItem("user") || sessionStorage.getItem("user");
-        setIsLoggedIn(Boolean(user));
-    }, []);
-
-    useEffect(() => {
         const checkLoginStatus = async () => {
-          const loggedInUser = await checkUserLogin();
-          if (loggedInUser) {
-            setUser(loggedInUser);
+          const res = await fetch('/api/check-login', {
+            method: 'GET',
+            credentials: 'include',
+          });
+          if (res.ok) {
+            setIsLoggedIn(true);
           } else {
-            setUser(null);
+            setIsLoggedIn(false);
           }
         };      
         checkLoginStatus();
@@ -28,7 +25,8 @@ export default function NavBar() {
     const handleLogoutClick = async (event) => {
         event.preventDefault();
         const res = await fetch('/api/logout', {
-            method: 'POST'
+            method: 'POST',
+            credentials: 'include'
         });
         if(res.ok){
            setIsLoggedIn(false);

@@ -1,34 +1,40 @@
 
 import { MongoClient, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
-import { withIronSession } from "next-iron-session"; // Assuming you are using next-iron-session
+import { withIronSession } from "next-iron-session";
+
+async function connectToDatabase() {
+  const uri = process.env.MONGODB_URI;
+  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+  if (!client.isConnected()) await client.connect();
+
+  return { db: client.db(), client };
+}
 
 async function handler(req, res) {
   if (req.method === 'POST') {
     const { username, password } = req.body;
-
-    const uri = process.env.MONGODB_URI;
-    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    await client.connect();
-
-    const db = client.db();
+    const { db, client } = await connectToDatabase();
 
     try {
       const user = await db.collection('users').findOne({ username });
 
       if (!user) {
-        throw new Error('User does not exist!');
+        res.status(404).json({ error: 'User does not exist!' });
+        return;
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
-        throw new Error('Incorrect password!');
+        res.status(401).json({ error: 'Incorrect password!' });
+        return;
       }
 
       const userForSession = {
         id: user._id.toString(),
-        username: username,
+        username: user.username,
         email: user.email,
       }
 
@@ -41,15 +47,14 @@ async function handler(req, res) {
     } finally {
       await client.close();
     }
-
   } else {
     res.status(400).json({ error: 'Invalid request method' });
   }
 };
 
 export default withIronSession(handler, {
-  cookieName: 'user-session', // replace with your cookie name
-  password: process.env.SECRET_COOKIE_PASSWORD, // replace with your secret password
+  cookieName: 'user-session',
+  password: process.env.SECRET_COOKIE_PASSWORD,
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
   },
