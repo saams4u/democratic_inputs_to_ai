@@ -41,6 +41,7 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
         const body = req.body;
         const prompt = body.prompt || "";
+        const stack = body.stack;
 
         if (!configuration.apiKey) {
             return res.status(500).json({error: {message: "OpenAI API Key is missing!"}});

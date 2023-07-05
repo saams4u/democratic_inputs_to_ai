@@ -134,6 +134,7 @@ export async function getServerSideProps(context) {
       }
   
       let stacks;
+      
       try {
         stacks = await res.json();
       } catch(e) {
