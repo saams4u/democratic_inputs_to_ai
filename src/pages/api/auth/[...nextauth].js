@@ -62,17 +62,15 @@ export default NextAuth({
     jwt: true,
   },
   callbacks: {
-    async jwt(token, user) {
-      if (user) {
-        token.id = user.id; // Save user ID into token
-        token.email = user.email; // Save user email into token
-      }
-      return Promise.resolve(token);
+    async jwt(token, user, account) {
+      if (user) token.id = user.id; // Save user ID into token
+      if (account?.error) token.error = account.error; // Save error into token
+      return token;
     },
     async session(session, token) {
-      session.user.id = token?.id; // Add user ID to session
-      session.user.email = token?.email; // Add user email to session
-      return Promise.resolve(session);
+      session.error = token.error; // Add error to session
+      session.id = token.id; // Add user ID to session
+      return session;
     },
     async signIn(user, account, profile) {
       if (account && account.type === 'credentials') {
@@ -83,7 +81,7 @@ export default NextAuth({
       }
       return true;
     }     
-  },  
+  },
   events: {
     async signIn(message) {
       if (message.error) {
