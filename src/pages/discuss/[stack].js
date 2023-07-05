@@ -19,14 +19,13 @@ export default function Stack({stack, stackKey}) {
         const cleanChatHistory = async () => {
             await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
                 method: "DELETE",
-                body: JSON.stringify({stack: stackKey}),
                 headers: {
                     "Content-Type": "application/json"
                 }
             });
         }
         cleanChatHistory();
-    }, []);
+    }, [stackKey]);    
 
     console.log(user);
 
@@ -56,7 +55,7 @@ export default function Stack({stack, stackKey}) {
         try {
             const response = await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
                 method: "POST",
-                body: JSON.stringify({prompt}),
+                body: JSON.stringify({prompt, stack: stackKey}),
                 headers: {
                     "Content-Type": "application/json"
                 }
