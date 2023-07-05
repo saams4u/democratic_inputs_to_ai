@@ -115,13 +115,12 @@ export async function getServerSideProps(context) {
         password: process.env.SECRET_COOKIE_PASSWORD,
         cookieName: "user-session",
         cookieOptions: {
-            secure: process.env.NODE_ENV === "production",
-            ttl: 60 * 60 * 24 // 24 hours
+          secure: process.env.NODE_ENV ? process.env.NODE_ENV === "production" : false
         },
     });
 
     const session = await getSession(context.req);
-    
+
     if (!session) {
       return {
         redirect: {
@@ -130,17 +129,17 @@ export async function getServerSideProps(context) {
         },
       };
     }
-  
+
     try {
       const res = await fetch(`/data/stacks.json`);
-  
+
       if (!res.ok) {
         console.error(`Error: HTTP ${res.status}`);
         const text = await res.text();
         console.error(`Response text: ${text}`);
         throw new Error('Network response was not ok');
       }
-  
+
       let stacks;
 
       try {
@@ -151,17 +150,17 @@ export async function getServerSideProps(context) {
         console.error(`Response text: ${text}`);
         throw e;
       }
-  
+
       return {
         props: {
           stack: stacks[context.params.stack],
           stackKey: context.params.stack,
         },
       };
-      
+
     } catch (error) {
       console.error(`Fetch Error: ${error}`);
-  
+
       return {
         redirect: {
           destination: `/error?message=${encodeURIComponent(error.message)}`,
