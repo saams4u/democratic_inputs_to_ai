@@ -13,6 +13,19 @@ const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
 export default async function handler(req, res) {
+    await runMiddleware(req, res, cors);
+
+    const session = await getSession({ req });
+
+    if (!session) {
+        return res.status(403).json({ error: { message: "No active session found!" } });
+    }
+
+    const { user } = session;
+
+    if (!user) {
+        return res.status(500).json({error: {message: "Session is missing!"}});
+    }
 
     if (req.method === "OPTIONS") {
         res.status(200).end();
@@ -20,6 +33,7 @@ export default async function handler(req, res) {
     }
 
     if (req.method === "GET") {
+        const db = await dbConnect();
         const history = db.data.messageHistory[user.uid] || [];
         return res.status(200).json(history);
     }
