@@ -1,10 +1,10 @@
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-
 import Link from 'next/link';
+
+import { useUser } from "@/lib/hooks";
+import { applySession } from "next-iron-session";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -13,18 +13,17 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { data: session, status: sessionStatus } = useSession();
+  const { user } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (session?.error) {
-      setErrorMessage(session.error);
+    if (user?.error) {
+      setErrorMessage(user.error);
     }
-
-    if (sessionStatus === 'authenticated') {
+    if (user) {
       router.push('/');
     }
-  }, [session, sessionStatus, router]);
+  }, [user, router]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -112,3 +111,28 @@ export default function Register() {
     </div>
   );
 }
+
+export const getServerSideProps = withIronSession(async ({ req, res }) => {
+  await applySession(req, res, {
+    cookieName: "user-session",
+    password: process.env.SECRET_COOKIE_PASSWORD,
+    cookieOptions: {
+      secure: process.env.NODE_ENV === "production",
+    },
+  });
+
+  const user = req.session.get("user");
+
+  if (user) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    };
+  }
+
+  return {
+    props: {},
+  };
+});

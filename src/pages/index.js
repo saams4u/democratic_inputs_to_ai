@@ -2,15 +2,16 @@
 import stacks from "@/data/stacks.json";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from 'framer-motion';  // Add this line
+import { motion } from 'framer-motion';
 
-import { useSession } from 'next-auth/react';
+import { withIronSession } from "next-iron-session";
+import { useUser } from "@/lib/hooks";
 
 function Home() {
-  const { data: session } = useSession();
+  const { user } = useUser();
 
   const renderStacks = () => {
-    if (session) { 
+    if (user) { 
       return (
         <div className="grid grid-cols-4 gap-8">
           {Object.keys(stacks).map((stackKey) => {
@@ -18,7 +19,7 @@ function Home() {
             return (
               <Link legacyBehavior key={stack.href} href={stack.href}>
                 <motion.a 
-                  whileHover={{ scale: 1.1 }} // Add animation for hover
+                  whileHover={{ scale: 1.1 }}
                   className={`${stack.hoverClass} relative border-2 border-solid mr-4 mb-4 rounded-xl p-4 shadow-xl hover:shadow-xl transition-shadow duration-200 cursor-pointer`}>
                   <Image 
                     title={stack.name}
@@ -64,4 +65,10 @@ function Home() {
   )
 }
 
-export default Home;
+export default withIronSession(Home, {
+  password: process.env.SECRET_COOKIE_PASSWORD,
+  cookieName: "user-session",
+  cookieOptions: {
+    secure: process.env.NODE_ENV === "production",
+  },
+});

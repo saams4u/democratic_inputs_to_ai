@@ -1,27 +1,23 @@
 
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { signIn } from "next-auth/react";
+import { useState } from "react";
 import { useRouter } from "next/router";
+import { applySession } from 'next-iron-session';
+import { withIronSession } from 'next-iron-session';
 
-import Link from 'next/link';
-
-export default function Login() {
+function Login({ user }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorEmpty, setErrorEmpty] = useState("");
   const [errorLogin, setErrorLogin] = useState("");
 
-  const { data: session, status: sessionStatus } = useSession();
-
   const router = useRouter();
   const { error } = router.query;
 
   useEffect(() => {
-    if (session) {
+    if (user) {
       router.push("/");
     }
-  }, [session, router]);
+  }, [user, router]);
 
   useEffect(() => {
     if (error === 'CredentialsSignin')
@@ -36,11 +32,18 @@ export default function Login() {
       return;
     }
 
-    signIn('credentials', {
-      username,
-      password,
-      callbackUrl: `${window.location.origin}/`,
-    }).catch(console.error);
+    const loggedInUser = { username }; // Just for example. Your actual user object might be different.
+
+    await applySession(req, res, {
+      cookieName: "user-session",
+      password: process.env.SECRET_COOKIE_PASSWORD,
+      cookieOptions: {
+        secure: process.env.NODE_ENV === "production",
+      },
+    });
+    req.session.set('user', loggedInUser);
+    await req.session.save();
+    router.push("/");
   };
 
   return (
@@ -85,3 +88,21 @@ export default function Login() {
     </div>
   );
 }
+
+export const getServerSideProps = withIronSession(async ({ req, res }) => {
+  await applySession(req, res, {
+    cookieName: "user-session",
+    password: process.env.SECRET_COOKIE_PASSWORD,
+    cookieOptions: {
+      secure: process.env.NODE_ENV === "production",
+    },
+  });
+
+  const user = req.session.get("user");
+
+  return {
+    props: { user },
+  };
+});
+
+export default Login;
