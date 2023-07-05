@@ -62,26 +62,28 @@ export default NextAuth({
     jwt: true,
   },
   callbacks: {
-    async jwt(token, user, account) {
-      if (user) token.id = user.id; // Save user ID into token
-      if (account?.error) token.error = account.error; // Save error into token
-      return token;
+    async jwt(token, user) {
+      if (user) {
+        token.id = user.id; // Save user ID into token
+        token.email = user.email; // Save user email into token
+      }
+      return Promise.resolve(token);
     },
     async session(session, token) {
-      session.error = token?.error; // Add error to session
-      session.id = token?.id; // Add user ID to session
-      return session;
+      session.user.id = token.id; // Add user ID to session
+      session.user.email = token.email; // Add user email to session
+      return Promise.resolve(session);
     },
     async signIn(user, account, profile) {
       if (account && account.type === 'credentials') {
-        if (profile.error || !user) {
+        if (!user) {
           console.log("Authentication failed.");
-          return Promise.reject(profile.error || 'Authentication failed');
+          return Promise.reject('/login'); // Redirecting to login page
         }
       }
       return true;
     }     
-  },
+  },  
   events: {
     async signIn(message) {
       if (message.error) {
