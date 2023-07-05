@@ -104,15 +104,22 @@ export default async function handler(req, res) {
         }
 
     } else if (req.method === "DELETE") {
+        const body = req.body;
+        const stack = body.stack;
+    
+        if (!stack) {
+            return res.status(400).json({ error: { message: "Stack is not provided in request." } });
+        }
+    
         const db = await dbConnect();
         if (db.data.messageHistory[user.id]) {
             db.data.messageHistory[user.id] = [];
-
+    
             await db.write();
             return res.status(200).json({message: "History cleared!"});
         }
-
-        return res.status(200).json({message: "Nothing to clear!"});
+    
+        return res.status(200).json({message: "Nothing to clear!"});    
 
     } else {
         return res.status(500).json({error: {message: "Invalid API Route"}});

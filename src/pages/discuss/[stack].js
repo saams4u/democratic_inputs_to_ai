@@ -17,7 +17,13 @@ export default function Stack({stack, stackKey}) {
 
     useEffect(() => {
         const cleanChatHistory = async () => {
-          await fetch(`${baseUrl}/api/completion`, {method: "DELETE"});
+            await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
+                method: "DELETE",
+                body: JSON.stringify({stack: stackKey}),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
         }
         cleanChatHistory();
     }, []);
@@ -34,19 +40,19 @@ export default function Stack({stack, stackKey}) {
 
     const onSubmit = async (prompt) => {
         if (prompt.trim().length === 0) {
-          return;
+            return;
         }
-    
+      
         setMessages((messages) => [
-          ...messages,
-          {
-            id: new Date().toISOString(),
-            author: "human",
-            avatar: "https://thrangra.sirv.com/Avatar2.png",
-            text: prompt
-          }
+            ...messages,
+            {
+                id: new Date().toISOString(),
+                author: "human",
+                avatar: "https://thrangra.sirv.com/Avatar2.png",
+                text: prompt
+            }
         ]);
-
+    
         try {
             const response = await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
                 method: "POST",
@@ -134,7 +140,7 @@ export async function getServerSideProps(context) {
       }
   
       let stacks;
-      
+
       try {
         stacks = await res.json();
       } catch(e) {
