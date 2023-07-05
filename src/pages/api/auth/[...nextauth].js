@@ -81,5 +81,19 @@ export default NextAuth({
       }
       return true;
     }     
-  }  
+  },
+  events: {
+    async signIn(message) {
+      if (message.error) {
+        message.res.setHeader('Access-Control-Allow-Credentials', 'true');
+        message.res.setHeader('Access-Control-Allow-Origin', 'https://democratic-inputs-to-ai-3bv6.vercel.app');
+      }
+    },
+    async session(message) {
+      if (message.error) {
+        message.res.setHeader('Access-Control-Allow-Credentials', 'true');
+        message.res.setHeader('Access-Control-Allow-Origin', 'https://democratic-inputs-to-ai-3bv6.vercel.app');
+      }
+    }
+  }
 })
