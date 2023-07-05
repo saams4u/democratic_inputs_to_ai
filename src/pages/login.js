@@ -3,7 +3,6 @@ import Link from 'next/link';
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
 import { loginUser } from '@/services/userService';
 
 export default function Login() {
@@ -34,6 +33,7 @@ export default function Login() {
           setErrorLogin(user.error);
         }
         if (user) {
+          setErrorEmpty("");  // Clear the errorEmpty state
           router.push('/');
         }
     } catch (error) {
