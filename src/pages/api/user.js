@@ -8,6 +8,6 @@ export default async function userRoute(req, res) {
     if (session) {
         return res.status(200).json(session.user);
     } else {
-        return res.status(200).json(null);
+        return res.status(401).json({ error: "Not authorized" });
     }
 }

@@ -11,16 +11,16 @@ export default function Stack({stack, stackKey}) {
 
     const { user, status } = useUser();   // use the useUser hook
     const [messages, setMessages] = useState([]);
-
+    
     const chatRef = useRef(null);
     const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
 
-    /* useEffect(() => {
+    useEffect(() => {
         const cleanChatHistory = async () => {
           await fetch("/api/completion", {method: "DELETE"});
         }
         cleanChatHistory();
-    }, []);  */  // Consider when you want to clear the chat history
+    }, []);
 
     console.log(user);
 

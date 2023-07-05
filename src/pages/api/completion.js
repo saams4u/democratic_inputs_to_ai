@@ -13,6 +13,17 @@ const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
 export default async function handler(req, res) {
+
+    if (req.method === "OPTIONS") {
+        res.status(200).end();
+        return;
+    }
+
+    if (req.method === "GET") {
+        const history = db.data.messageHistory[user.uid] || [];
+        return res.status(200).json(history);
+    }
+
     if (req.method === "POST") {
         await runMiddleware(req, res, cors);
 
