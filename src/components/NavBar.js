@@ -1,18 +1,25 @@
 
 import Link from "next/link";
-import useUser from '@/hooks/useUser';
 
+import { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 
 export default function NavBar() {
-    const { user, mutateUser } = useUser();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        const user = localStorage.getItem("user") || sessionStorage.getItem("user");
+        setIsLoggedIn(Boolean(user));
+    }, []);
 
     const handleLogoutClick = async (event) => {
         event.preventDefault();
-        const res = await fetch('/api/logout');
+        const res = await fetch('/api/logout', {
+            method: 'POST'
+        });
         if(res.ok){
-           mutateUser(null);
+           setIsLoggedIn(false);
            router.push('/login');
         }
     };    
@@ -25,7 +32,7 @@ export default function NavBar() {
                 </a>
             </Link>
             <div>
-                {!user && (
+                {!isLoggedIn && (
                     <>
                         <button
                             onClick={() => router.push("/login")}
@@ -43,7 +50,7 @@ export default function NavBar() {
                         </button>
                     </>
                 )}
-                {user && (
+                {isLoggedIn && (
                     <button 
                         onClick={handleLogoutClick} 
                         className="px-6 py-2 font-semibold text-white bg-red-500 rounded-lg hover:bg-red-400 transition-all duration-300 cursor-pointer"
