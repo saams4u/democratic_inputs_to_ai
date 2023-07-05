@@ -6,7 +6,8 @@ export function withNextSession(apiRoute) {
     password: process.env.SECRET_COOKIE_PASSWORD,
     cookieName: "user-session",
     cookieOptions: {
-      secure: process.env.NODE_ENV === "production"
+      secure: process.env.NODE_ENV === "production",
+      ttl: 60 * 60 * 24 // 24 hours
     }
   });
 }

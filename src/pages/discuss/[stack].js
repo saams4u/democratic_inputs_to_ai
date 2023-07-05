@@ -111,6 +111,15 @@ export default function Stack({stack, stackKey}) {
 }
 
 export async function getServerSideProps(context) {
+    await applySession(context.req, context.res, {
+      password: process.env.SECRET_COOKIE_PASSWORD,
+      cookieName: "user-session",
+      cookieOptions: {
+        secure: process.env.NODE_ENV === "production",
+        ttl: 60 * 60 * 24 // 24 hours
+      },
+    });
+
     const session = await getSession(context.req);
     
     if (!session) {
