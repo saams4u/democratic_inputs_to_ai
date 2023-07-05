@@ -13,6 +13,18 @@ export default function NavBar() {
         setIsLoggedIn(Boolean(user));
     }, []);
 
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+          const loggedInUser = await checkUserLogin();
+          if (loggedInUser) {
+            setUser(loggedInUser);
+          } else {
+            setUser(null);
+          }
+        };      
+        checkLoginStatus();
+    }, []);      
+
     const handleLogoutClick = async (event) => {
         event.preventDefault();
         const res = await fetch('/api/logout', {

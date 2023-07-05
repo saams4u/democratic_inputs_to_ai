@@ -1,8 +1,9 @@
 
 import { MongoClient, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
+import { withNextSession } from '@/lib/session'; // Use your actual session middleware if different
 
-export default async function handler(req, res) {
+export default withNextSession(async function handler(req, res) {
   if (req.method === 'POST') {
     const { username, password } = req.body;
 
@@ -25,11 +26,16 @@ export default async function handler(req, res) {
         throw new Error('Incorrect password!');
       }
 
-      res.status(200).json({
+      const userForSession = {
         id: user._id.toString(),
         username: username,
         email: user.email,
-      });
+      }
+
+      req.session.set('user', userForSession);
+      await req.session.save();
+
+      res.status(200).json(userForSession);
     } catch (error) {
       res.status(500).json({ error: error.message });
     } finally {
@@ -39,4 +45,4 @@ export default async function handler(req, res) {
   } else {
     res.status(400).json({ error: 'Invalid request method' });
   }
-}
+});
