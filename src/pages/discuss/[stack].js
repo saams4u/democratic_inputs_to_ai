@@ -5,6 +5,7 @@ import Prompt from '@/components/Prompt';
 import useUser from '@/hooks/useUser';
 
 import { useRef, useState, useEffect } from "react";
+import { applySession } from 'next-iron-session';
 import { getSession } from "iron-session";
 
 export default function Stack({stack, stackKey}) {
