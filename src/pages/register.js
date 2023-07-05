@@ -1,10 +1,9 @@
 
 import Link from 'next/link';
+import useUser from "@/hooks/useUser";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
-import useUser from "@/hooks/useUser";
 import { applySession } from "next-iron-session";
 
 export default function Register() {
@@ -115,8 +114,8 @@ export default function Register() {
 
 export const getServerSideProps = withIronSession(async ({ req, res }) => {
   await applySession(req, res, {
-    cookieName: "user-session",
     password: process.env.SECRET_COOKIE_PASSWORD,
+    cookieName: "user-session",
     cookieOptions: {
       secure: process.env.NODE_ENV === "production",
     },

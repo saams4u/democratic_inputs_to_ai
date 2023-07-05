@@ -1,11 +1,12 @@
 
 import stacks from "@/data/stacks.json";
+import useUser from "@/hooks/useUser";
+
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from 'framer-motion';
 
+import { motion } from 'framer-motion';
 import { withIronSession } from "next-iron-session";
-import useUser from "@/hooks/useUser";
 
 function Home() {
   const { user } = useUser();

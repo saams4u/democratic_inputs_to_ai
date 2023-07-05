@@ -1,8 +1,8 @@
 
 import Link from "next/link";
+import useUser from '@/hooks/useUser';
 
 import { useRouter } from 'next/router';
-import useUser from '@/hooks/useUser';
 
 export default function NavBar() {
     const { user, mutateUser } = useUser();

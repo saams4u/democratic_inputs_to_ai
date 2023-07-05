@@ -94,8 +94,8 @@ function Login({ user }) {
 
 export const getServerSideProps = withIronSession(async ({ req, res }) => {
   await applySession(req, res, {
-    cookieName: "user-session",
     password: process.env.SECRET_COOKIE_PASSWORD,
+    cookieName: "user-session",
     cookieOptions: {
       secure: process.env.NODE_ENV === "production",
     },
