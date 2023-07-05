@@ -1,7 +1,8 @@
 
+import Link from 'next/link';
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Link from 'next/link';
 
 import { useUser } from "@/lib/hooks";
 import { applySession } from "next-iron-session";
