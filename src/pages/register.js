@@ -36,18 +36,6 @@ export default function Register() {
       setErrorMessage("Passwords do not match.");
       return;
     }
-
-    signIn('credentials', {
-      username,
-      password,
-      email,
-      isRegistration: true,
-      redirect: true,
-      callbackUrl: `${window.location.origin}/`
-    }).catch((error) => {
-      setErrorMessage("Failed to register. Please check your information and try again.");
-      console.error(error);
-    });     
   };
 
   return (
