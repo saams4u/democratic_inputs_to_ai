@@ -1,9 +1,9 @@
 
 import Link from 'next/link';
-import useUser from "@/hooks/useUser";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
+import { registerUser } from '@/services/userService';
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -12,29 +12,31 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { user } = useUser();
   const router = useRouter();
-
-  useEffect(() => {
-    if (user?.error) {
-      setErrorMessage(user.error);
-    }
-    if (user) {
-      router.push('/');
-    }
-  }, [user, router]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setErrorMessage("");
 
     if (!username || !password || !confirmPassword || !email) {
-      setErrorMessage("All fields are required.");
-      return;
+        setErrorMessage("All fields are required.");
+        return;
     }
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match.");
-      return;
+        setErrorMessage("Passwords do not match.");
+        return;
+    }
+
+    try {
+        const user = await registerUser({ email, password, username });
+        if (user?.error) {
+          setErrorMessage(user.error);
+        }
+        if (user) {
+          router.push('/');
+        }
+    } catch (error) {
+        setErrorMessage(error.message);
     }
   };
 

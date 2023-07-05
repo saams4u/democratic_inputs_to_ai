@@ -115,7 +115,7 @@ export async function getServerSideProps(context) {
         password: process.env.SECRET_COOKIE_PASSWORD,
         cookieName: "user-session",
         cookieOptions: {
-          secure: process.env.NODE_ENV ? process.env.NODE_ENV === "production" : false
+          secure: process.env.NODE_ENV
         },
     });
 

@@ -42,3 +42,32 @@ export async function registerUser({ email, password, username }) {
     await client.close();
   }
 }
+
+export async function loginUser({ username, password }) {
+  const client = await connectDb();
+  const db = client.db();
+
+  try {
+    const user = await db.collection('users').findOne({ username });
+
+    if (!user) {
+      throw new Error('User does not exist!');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new Error('Incorrect password!');
+    }
+
+    return {
+      id: user._id.toString(),
+      username: username,
+      email: user.email,
+    };
+  } catch (error) {
+    throw error;
+  } finally {
+    await client.close();
+  }
+}

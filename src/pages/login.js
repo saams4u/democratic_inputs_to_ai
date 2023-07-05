@@ -1,9 +1,10 @@
 
 import Link from 'next/link';
-import useUser from "@/hooks/useUser";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+
+import { loginUser } from '@/services/userService';
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -11,16 +12,8 @@ export default function Login() {
   const [errorEmpty, setErrorEmpty] = useState("");
   const [errorLogin, setErrorLogin] = useState("");
 
-  const { user } = useUser();
   const router = useRouter();
-  
   const { error } = router.query;
-
-  useEffect(() => {
-    if (user) {
-      router.push("/");
-    }
-  }, [user, router]);
 
   useEffect(() => {
     if (error === 'CredentialsSignin')
@@ -34,6 +27,18 @@ export default function Login() {
       setErrorEmpty("All fields are required.");
       return;
     } 
+
+    try {
+        const user = await loginUser({ username, password });
+        if (user?.error) {
+          setErrorLogin(user.error);
+        }
+        if (user) {
+          router.push('/');
+        }
+    } catch (error) {
+        setErrorLogin(error.message);
+    }
   };
 
   return (
