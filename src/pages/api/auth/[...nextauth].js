@@ -70,15 +70,15 @@ export default NextAuth({
       return Promise.resolve(token);
     },
     async session(session, token) {
-      session.user.id = token.id; // Add user ID to session
-      session.user.email = token.email; // Add user email to session
+      session.user.id = token?.id; // Add user ID to session
+      session.user.email = token?.email; // Add user email to session
       return Promise.resolve(session);
     },
     async signIn(user, account, profile) {
       if (account && account.type === 'credentials') {
-        if (!user) {
+        if (profile.error || !user) {
           console.log("Authentication failed.");
-          return Promise.reject('/login'); // Redirecting to login page
+          return Promise.reject(profile.error || 'Authentication failed');
         }
       }
       return true;
