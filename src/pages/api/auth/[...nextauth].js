@@ -7,7 +7,8 @@ import { MongoClient } from 'mongodb';
 import { registerUser } from '@/services/userService';
 
 export default NextAuth({
-  secret: process.env.SECRET,
+  site: process.env.NEXTAUTH_URL,
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: 'Credentials',
