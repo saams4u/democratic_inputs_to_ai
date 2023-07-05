@@ -17,7 +17,7 @@ export default function Stack({stack, stackKey}) {
 
     useEffect(() => {
         const cleanChatHistory = async () => {
-          await fetch("/api/completion", {method: "DELETE"});
+          await fetch(`${baseUrl}/api/completion`, {method: "DELETE"});
         }
         cleanChatHistory();
     }, []);
@@ -71,7 +71,7 @@ export default function Stack({stack, stackKey}) {
               }
             ]);
         } catch (e) {
-            console.error(e); // Here you can handle the error more elaborately
+            console.error(e);
         }
     }           
 

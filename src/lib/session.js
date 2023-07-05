@@ -1,12 +1,13 @@
 
-import { withIronSessionApiRoute } from "iron-session/next";
+import { getSession } from "next-auth/react";
 
-export function withNextSession(apiRoute) {
-    return withIronSessionApiRoute(apiRoute, {
-        password: process.env.SECRET_COOKIE_PASSWORD,
-        cookieName: "user-session",
-        cookieOptions: {
-            secure: process.env.NODE_ENV === "production"
+export default function withNextAuthSession(handler) {
+    return async (req, res) => {
+        const session = await getSession({ req });
+        if (session) {
+            return handler(req, res);
+        } else {
+            res.status(401).json({ error: "Not authorized" });
         }
-    });
+    }
 }
