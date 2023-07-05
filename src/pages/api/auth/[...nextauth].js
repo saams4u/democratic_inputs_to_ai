@@ -68,8 +68,8 @@ export default NextAuth({
       return token;
     },
     async session(session, token) {
-      session.error = token.error; // Add error to session
-      session.id = token.id; // Add user ID to session
+      session.error = token?.error; // Add error to session
+      session.id = token?.id; // Add user ID to session
       return session;
     },
     async signIn(user, account, profile) {
