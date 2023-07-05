@@ -1,5 +1,6 @@
 
-import { connectDb } from "@/lib/db";
+import { connectDb } from "@/utils/db";
+import { ObjectId } from "mongodb";
 
 export default async function userRoute(req, res) {
   if (req.method === 'GET') {
