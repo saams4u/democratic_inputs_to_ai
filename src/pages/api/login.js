@@ -1,9 +1,9 @@
 
 import { MongoClient, ObjectId } from 'mongodb';
 import bcrypt from 'bcryptjs';
-import { withNextSession } from '@/lib/session'; // Use your actual session middleware if different
+import { withIronSession } from "next-iron-session"; // Assuming you are using next-iron-session
 
-export default withNextSession(async function handler(req, res) {
+async function handler(req, res) {
   if (req.method === 'POST') {
     const { username, password } = req.body;
 
@@ -45,4 +45,12 @@ export default withNextSession(async function handler(req, res) {
   } else {
     res.status(400).json({ error: 'Invalid request method' });
   }
+};
+
+export default withIronSession(handler, {
+  cookieName: 'user-session', // replace with your cookie name
+  password: process.env.SECRET_COOKIE_PASSWORD, // replace with your secret password
+  cookieOptions: {
+    secure: process.env.NODE_ENV === 'production',
+  },
 });
