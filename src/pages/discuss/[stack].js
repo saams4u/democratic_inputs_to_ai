@@ -1,6 +1,6 @@
 
 import { useRef, useState, useEffect } from "react";
-import { getSession } from "next-auth/react";
+import { getSession } from "iron-session";
 
 import Header from '@/components/Header';
 import Message from '@/components/Message';
@@ -9,33 +9,28 @@ import useUser from '@/hooks/useUser';
 
 export default function Stack({stack, stackKey}) {
 
-    const { user, status } = useUser();
-    const [messages, setMessages] = useState([]);
-    
+    const [messages, setMessages] = useState([]);    
+    const [activeSession, setActiveSession] = useState("");
+    const { user } = useUser();
+
     const chatRef = useRef(null);
-    const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
 
     useEffect(() => {
         const cleanChatHistory = async () => {
-            await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+          await fetch("/api/completion", {method: "DELETE"});
         }
         cleanChatHistory();
-    }, [stackKey]);    
+    }, []);    
 
-    console.log(user);
+    useEffect(() => {
+        if (user) {
+          setActiveSession(user.uid);
+        }
+    }, [user]);
 
-    if (status === 'loading') {
-        return <div>Loading...</div>;
-    }
-
-    if (status === 'unauthenticated') {
-        return <div>You need to be logged in to view this page.</div>;
-    }
+    useEffect(() => {
+        chatRef.current.scrollTo(0, chatRef.current.scrollHeight);
+      }, [messages]);    
 
     const onSubmit = async (prompt) => {
         if (prompt.trim().length === 0) {
@@ -53,9 +48,9 @@ export default function Stack({stack, stackKey}) {
         ]);
     
         try {
-            const response = await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
+            const response = await fetch(`/api/completion?stack=${stackKey}`, {
                 method: "POST",
-                body: JSON.stringify({prompt, stack: stackKey}),
+                body: JSON.stringify({prompt}),
                 headers: {
                     "Content-Type": "application/json"
                 }
@@ -116,7 +111,7 @@ export default function Stack({stack, stackKey}) {
 }
 
 export async function getServerSideProps(context) {
-    const session = await getSession(context);
+    const session = await getSession(context.req);
     
     if (!session) {
       return {
@@ -128,8 +123,7 @@ export async function getServerSideProps(context) {
     }
   
     try {
-      const baseUrl = "https://democratic-inputs-to-ai-3bv6.vercel.app";
-      const res = await fetch(`${baseUrl}/data/stacks.json`);
+      const res = await fetch(`/data/stacks.json`);
   
       if (!res.ok) {
         console.error(`Error: HTTP ${res.status}`);

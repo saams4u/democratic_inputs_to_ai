@@ -1,5 +1,5 @@
 
-import { getSession } from "next-auth/react";
+import { withNextSession } from "@/lib/session";
 import { Configuration, OpenAIApi } from "openai";
 import { cors, runMiddleware } from "./middleware";
 import { dbConnect } from "@/lib/lowDb";
@@ -12,24 +12,18 @@ const USER_NAME = "Human";
 const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
-export default async function handler(req, res) {
+export default withNextSession(async (req, res) => {
     await runMiddleware(req, res, cors);
-
-    const session = await getSession({ req });
-
-    if (!session) {
-        return res.status(403).json({ error: { message: "No active session found!" } });
-    }
-
-    const { user } = session.user;
-
-    if (!user) {
-        return res.status(500).json({error: {message: "Session is missing!"}});
-    }
 
     if (req.method === "OPTIONS") {
         res.status(200).end();
         return;
+    }
+
+    const { user } = req.session;
+
+    if (!user) {
+        return res.status(500).json({error: {message: "Session is missing!"}});
     }
 
     if (req.method === "GET") {
@@ -41,7 +35,7 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
         const body = req.body;
         const prompt = body.prompt || "";
-        const stack = body.stack;
+        const {stack} = req.query;
 
         if (!configuration.apiKey) {
             return res.status(500).json({error: {message: "OpenAI API Key is missing!"}});
@@ -124,4 +118,4 @@ export default async function handler(req, res) {
     } else {
         return res.status(500).json({error: {message: "Invalid API Route"}});
     }
-}
+});

@@ -1,18 +1,21 @@
 
 import Link from "next/link";
 
-import { signOut } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
+import useUser from '@/hooks/useUser';
 
 export default function NavBar() {
-    const { data: session, status } = useSession();
+    const { user, mutateUser } = useUser();
     const router = useRouter();
 
     const handleLogoutClick = async (event) => {
         event.preventDefault();
-        await signOut({ callbackUrl: '/login' }); 
-    };
+        const res = await fetch('/api/logout');
+        if(res.ok){
+           mutateUser(null);
+           router.push('/login');
+        }
+    };    
 
     return (
         <header className="p-6 bg-indigo-700 shadow-md flex justify-between items-center px-8 lg:px-16 fixed top-0 w-full z-50 transition-all duration-500">
@@ -22,7 +25,7 @@ export default function NavBar() {
                 </a>
             </Link>
             <div>
-                {!session && (
+                {!user && (
                     <>
                         <button
                             onClick={() => router.push("/login")}
@@ -40,7 +43,7 @@ export default function NavBar() {
                         </button>
                     </>
                 )}
-                {session && (
+                {user && (
                     <button 
                         onClick={handleLogoutClick} 
                         className="px-6 py-2 font-semibold text-white bg-red-500 rounded-lg hover:bg-red-400 transition-all duration-300 cursor-pointer"

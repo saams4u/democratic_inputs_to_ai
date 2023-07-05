@@ -2,7 +2,7 @@
 import Cors from 'cors'
 
 const cors = Cors({
-  methods: ['GET', 'POST', 'HEAD', 'OPTIONS', 'PUT'],
+  methods: ['GET', 'POST', 'DELETE', 'OPTIONS', 'PUT'],
   origin: 'https://democratic-inputs-to-ai-3bv6.vercel.app', // add your client-side domain here
   credentials: true, // allow credentials from the client
   preflightContinue: false,

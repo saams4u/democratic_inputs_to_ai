@@ -1,13 +1,13 @@
 
 import '@/styles/globals.css'
-import NavBar from '@/components/NavBar'; // Assuming NavBar is placed inside a components directory
-import { SessionProvider } from "next-auth/react"
+import NavBar from '@/components/NavBar'; 
+import { UserProvider } from '@/context/UserContext';
 
-export default function MyApp({ Component, pageProps: { session, ...pageProps } }) {
+export default function MyApp({ Component, pageProps }) {
   return (
-    <SessionProvider session={session}>
+    <UserProvider>
       <NavBar />
       <Component {...pageProps} />
-    </SessionProvider>
+    </UserProvider>
   )
 }
