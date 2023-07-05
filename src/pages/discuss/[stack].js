@@ -5,11 +5,11 @@ import { getSession } from "next-auth/react";
 import Header from '@/components/Header';
 import Message from '@/components/Message';
 import Prompt from '@/components/Prompt';
-import useUser from '@/hooks/useUser';   // import the useUser hook
+import useUser from '@/hooks/useUser';
 
 export default function Stack({stack, stackKey}) {
 
-    const { user, status } = useUser();   // use the useUser hook
+    const { user, status } = useUser();
     const [messages, setMessages] = useState([]);
     
     const chatRef = useRef(null);
@@ -25,7 +25,7 @@ export default function Stack({stack, stackKey}) {
     console.log(user);
 
     if (status === 'loading') {
-        return <div>Loading...</div>;   // show a loading message
+        return <div>Loading...</div>;
     }
 
     if (status === 'unauthenticated') {
@@ -47,27 +47,31 @@ export default function Stack({stack, stackKey}) {
           }
         ]);
 
-        const response = await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
-            method: "POST",
-            body: JSON.stringify({prompt}),
-            headers: {
-                "Content-Type": "application/json"
+        try {
+            const response = await fetch(`${baseUrl}/api/completion?stack=${stackKey}`, {
+                method: "POST",
+                body: JSON.stringify({prompt}),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+    
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
             }
-        });
-
-        if (response.ok) {
-          const json = await response.json();
-          setMessages((messages) => [
-            ...messages,
-            {
-              id: new Date().toISOString(),
-              author: "ai",
-              avatar: "/logo-open-ai.png",
-              text: json.result
-            }
-          ]);
-        } else {
-          console.error("Response not OK"); // Modify this line to handle errors as you see fit
+    
+            const json = await response.json();
+            setMessages((messages) => [
+              ...messages,
+              {
+                id: new Date().toISOString(),
+                author: "ai",
+                avatar: "/logo-open-ai.png",
+                text: json.result
+              }
+            ]);
+        } catch (e) {
+            console.error(e); // Here you can handle the error more elaborately
         }
     }           
 
