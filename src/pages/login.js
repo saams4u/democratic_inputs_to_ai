@@ -3,7 +3,6 @@ import Link from 'next/link';
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { loginUser } from '@/services/userService';
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -28,11 +27,19 @@ export default function Login() {
     } 
 
     try {
-        const user = await loginUser({ username, password });
-        if (user?.error) {
-          setErrorLogin(user.error);
-        }
-        if (user) {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          setErrorLogin(data.error);
+        } else {
           setErrorEmpty("");  // Clear the errorEmpty state
           router.push('/');
         }
