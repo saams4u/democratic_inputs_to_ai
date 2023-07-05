@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from 'framer-motion';
 
 import { withIronSession } from "next-iron-session";
-import { useUser } from "@/lib/hooks";
+import useUser  from "@/lib/hooks";
 
 function Home() {
   const { user } = useUser();

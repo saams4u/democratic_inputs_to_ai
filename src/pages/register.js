@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
-import { useUser } from "@/lib/hooks";
+import useUser from "@/lib/hooks";
 import { applySession } from "next-iron-session";
 
 export default function Register() {
