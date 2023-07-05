@@ -6,9 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { motion } from 'framer-motion';
-import { withIronSession } from "next-iron-session";
 
-function Home() {
+export default function Home() {
   const { user } = useUser();
 
   const renderStacks = () => {
@@ -65,12 +64,3 @@ function Home() {
     </div>
   )
 }
-
-export default withIronSession(Home, {
-  password: process.env.SECRET_COOKIE_PASSWORD,
-  cookieName: "user-session",
-  cookieOptions: {
-    secure: process.env.NODE_ENV ? process.env.NODE_ENV === "production" : false,
-    ttl: 60 * 60 * 24 // 24 hours
-  },
-});

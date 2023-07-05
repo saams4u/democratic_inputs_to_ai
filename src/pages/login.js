@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import useUser from "@/hooks/useUser";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 export default function Login() {
