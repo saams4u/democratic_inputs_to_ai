@@ -1,5 +1,5 @@
 
-import { withNextAuth, getSession } from "@/lib/session";
+import { withNextSession, getSession } from "@/lib/session";
 import { Configuration, OpenAIApi } from "openai";
 import { cors, runMiddleware } from "./middleware";
 import { dbConnect } from "@/lib/lowDb";
@@ -12,7 +12,7 @@ const USER_NAME = "Human";
 const AI_NAME = "EquiBot";
 const MEMORY_SIZE = 6;
 
-export default withNextAuth(async (req, res) => {
+export default withNextSession(async (req, res) => {
     await runMiddleware(req, res, cors);
 
     const session = await getSession({ req });
