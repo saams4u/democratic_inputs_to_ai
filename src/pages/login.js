@@ -1,18 +1,19 @@
 
 import Link from 'next/link';
+import useUser from "@/hooks/useUser";
 
 import { useState } from "react";
 import { useRouter } from "next/router";
 
-import { withIronSession, applySession } from 'next-iron-session';
-
-function Login({ user }) {
+export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorEmpty, setErrorEmpty] = useState("");
   const [errorLogin, setErrorLogin] = useState("");
 
+  const { user } = useUser();
   const router = useRouter();
+  
   const { error } = router.query;
 
   useEffect(() => {
@@ -32,20 +33,7 @@ function Login({ user }) {
     if (!username || !password) {
       setErrorEmpty("All fields are required.");
       return;
-    }
-
-    const loggedInUser = { username }; // Just for example. Your actual user object might be different.
-
-    await applySession(req, res, {
-      cookieName: "user-session",
-      password: process.env.SECRET_COOKIE_PASSWORD,
-      cookieOptions: {
-        secure: process.env.NODE_ENV === "production",
-      },
-    });
-    req.session.set('user', loggedInUser);
-    await req.session.save();
-    router.push("/");
+    } 
   };
 
   return (
@@ -90,22 +78,3 @@ function Login({ user }) {
     </div>
   );
 }
-
-export const getServerSideProps = withIronSession(async ({ req, res }) => {
-  await applySession(req, res, {
-    password: process.env.SECRET_COOKIE_PASSWORD,
-    cookieName: "user-session",
-    cookieOptions: {
-      secure: process.env.NODE_ENV ? process.env.NODE_ENV === "production" : false,
-      ttl: 60 * 60 * 24 // 24 hours
-    },
-  });
-
-  const user = req.session.get("user");
-
-  return {
-    props: { user },
-  };
-});
-
-export default Login;

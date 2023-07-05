@@ -5,8 +5,6 @@ import useUser from "@/hooks/useUser";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
-import { withIronSession, applySession } from 'next-iron-session';
-
 export default function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -112,29 +110,3 @@ export default function Register() {
     </div>
   );
 }
-
-export const getServerSideProps = withIronSession(async ({ req, res }) => {
-  await applySession(req, res, {
-    password: process.env.SECRET_COOKIE_PASSWORD,
-    cookieName: "user-session",
-    cookieOptions: {
-      secure: process.env.NODE_ENV ? process.env.NODE_ENV === "production" : false,
-      ttl: 60 * 60 * 24 // 24 hours
-    },
-  });
-
-  const user = req.session.get("user");
-
-  if (user) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      }
-    };
-  }
-
-  return {
-    props: {},
-  };
-});
