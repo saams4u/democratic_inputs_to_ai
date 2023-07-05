@@ -119,6 +119,7 @@ export const getServerSideProps = withIronSession(async ({ req, res }) => {
     cookieName: "user-session",
     cookieOptions: {
       secure: process.env.NODE_ENV === "production",
+      ttl: 60 * 60 * 24 // 24 hours
     },
   });
 
