@@ -1,7 +1,7 @@
 
 import { getSession } from "next-auth/react";
 
-export default function withNextAuthSession(handler) {
+export default function withNextAuth(handler) {
     return async (req, res) => {
         const session = await getSession({ req });
         if (session) {
